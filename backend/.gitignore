@@ -1,0 +1,13 @@
+.env
+__pycache__/
+*.pyc
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Test and scratch scripts
+test_*.py
+scratch_*.py
+temp_*.py
