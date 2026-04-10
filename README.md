@@ -28,14 +28,14 @@ A multimodal AI assistant that can **hear you, see you, speak back, and generate
 
 ## Features
 
-### 🎙️ Voice Mode
+### <img src="https://api.iconify.design/lucide/mic.svg?color=%2300AAFF" width="20" height="20" /> Voice Mode
 - Hold-to-speak mic with real-time audio waveform
 - Dual-engine STT (Sarvam Saaras primary, Groq Whisper fallback)
 - Streaming LLM responses with anti-hallucination validation
 - Natural TTS (Kokoro for English, gTTS for Indic languages)
 - Compound requests: *"Show me a chocolate cake and give me the recipe"*
 
-### 👁️ Vision Mode
+### <img src="https://api.iconify.design/lucide/eye.svg?color=%2300AAFF" width="20" height="20" /> Vision Mode
 - Live webcam with AI-powered visual awareness
 - Personalized greeting on camera open (sees your outfit, expression, environment)
 - Toggle-mic voice chat with smart intent routing:
@@ -44,27 +44,27 @@ A multimodal AI assistant that can **hear you, see you, speak back, and generate
 - Real-time YOLOv11 object detection with bounding box overlays
 - Image generation from camera: *"Make me look anime"* → img2img transform
 
-### 🎨 Creative Vision Features
+### <img src="https://api.iconify.design/lucide/palette.svg?color=%2300AAFF" width="20" height="20" /> Creative Vision Features
 | Feature | What It Does |
 |---------|-------------|
 | **What If** | Reimagines your scene: *"What if this was underwater?"* → new image + narration |
 | **Biographies** | Fictional life story for any detected object with AI-generated origin illustration |
 | **Director** | Turns your camera view into a movie poster with genre, title, tagline & trailer script |
 
-### 🖼️ Image Generation
+### <img src="https://api.iconify.design/lucide/image.svg?color=%2300AAFF" width="20" height="20" /> Image Generation
 - **img2img**: Camera frame → styled portrait (anime, cartoon, superhero, traditional, 17+ styles)
 - **text2img**: Text prompt → generated image (Oxlo Image Pro / FLUX.1 Schnell)
-- Automatic model fallback and 1024×1024 output
+- Automatic model fallback and 1024x1024 output
 
 ---
 
 ## Architecture
 
-### 🎙️ Voice Mode Flow
+### <img src="https://api.iconify.design/lucide/mic.svg?color=%2300AAFF" width="18" height="18" /> Voice Mode Flow
 
 ```mermaid
 flowchart TD
-    A["🎤 User speaks into mic"] --> B["Audio recorded as WebM"]
+    A["User speaks into mic"] --> B["Audio recorded as WebM"]
     B --> C{"STT Engine"}
     C -->|"Indian Languages"| D["Sarvam Saaras v3"]
     C -->|"English / Fallback"| E["Groq Whisper v3 Turbo"]
@@ -78,31 +78,31 @@ flowchart TD
     J --> K{"TTS Engine"}
     K -->|"English"| L["Kokoro 82M"]
     K -->|"Indic"| M["gTTS"]
-    L --> N["🔊 Audio plays in browser"]
+    L --> N["Audio plays in browser"]
     M --> N
 ```
 
-### 👁️ Vision Mode Flow
+### <img src="https://api.iconify.design/lucide/eye.svg?color=%2300AAFF" width="18" height="18" /> Vision Mode Flow
 
 ```mermaid
 flowchart TD
-    A["📷 User opens camera"] --> B["Wait 1.5s, capture first frame"]
+    A["User opens camera"] --> B["Wait 1.5s, capture first frame"]
     B --> C["Vision LLM: Kimi K2.5 analyzes appearance"]
-    C --> D["🔊 AI speaks personalized greeting"]
-    D --> E["🟢 Listening state"]
-    E --> F["🎤 User taps mic and speaks"]
+    C --> D["AI speaks personalized greeting"]
+    D --> E["Listening state"]
+    E --> F["User taps mic and speaks"]
     F --> G["STT: Sarvam / Whisper"]
     G --> H{"Intent Router"}
-    H -->|"Visual question"| I["📷 Capture fresh frame"]
+    H -->|"Visual question"| I["Capture fresh frame"]
     I --> J["Vision LLM: Frame + Transcript"]
     H -->|"Non-visual question"| K["Chat LLM: Text only (faster)"]
-    H -->|"Image request"| L["📷 Capture frame"]
+    H -->|"Image request"| L["Capture frame"]
     L --> M{"Self-transform?"}
     M -->|"Yes: make me anime"| N["img2img: Oxlo Image Pro"]
     M -->|"No: generate a cat"| O["text2img: Oxlo Image Pro"]
-    J --> P["🔊 TTS speaks response"]
+    J --> P["TTS speaks response"]
     K --> P
-    N --> Q["🖼️ Image rendered in chat"]
+    N --> Q["Image rendered in chat"]
     O --> Q
     Q --> P
     P --> E
@@ -112,7 +112,7 @@ flowchart TD
 
 ## AI Models Used
 
-### 🧠 Large Language Models (LLM)
+### <img src="https://api.iconify.design/lucide/brain.svg?color=%2300AAFF" width="18" height="18" /> Large Language Models (LLM)
 | Model | Role | Provider |
 |-------|------|----------|
 | **Kimi K2.5** | Primary Chat & Vision LLM (text + multimodal) | Oxlo.ai |
@@ -122,25 +122,25 @@ flowchart TD
 | **Ministral 14B** | Chat & Vision fallback #3 | Oxlo.ai |
 | **Llama 3 70B** | Final Groq text fallback (when all Oxlo models fail) | Groq |
 
-### 🗣️ Speech-to-Text (STT)
+### <img src="https://api.iconify.design/lucide/audio-lines.svg?color=%2300AAFF" width="18" height="18" /> Speech-to-Text (STT)
 | Model | Role | Provider |
 |-------|------|----------|
 | **Sarvam Saaras v3** | Primary STT, Indian-language optimized (verbatim mode) | Sarvam AI |
 | **Whisper Large v3 Turbo** | Fallback STT, broad multilingual, ultra-fast | Groq |
 | **Whisper Large v3** | Secondary fallback STT | Oxlo.ai |
 
-### 🔊 Text-to-Speech (TTS)
+### <img src="https://api.iconify.design/lucide/volume-2.svg?color=%2300AAFF" width="18" height="18" /> Text-to-Speech (TTS)
 | Model | Role | Provider |
 |-------|------|----------|
 | **Kokoro 82M** | English & Latin-script TTS, high-quality neural voice | Oxlo.ai |
 | **gTTS** | Indic language TTS: Hindi, Kannada, Tamil, Telugu, Japanese | Google |
 
-### 👁️ Computer Vision
+### <img src="https://api.iconify.design/lucide/scan-eye.svg?color=%2300AAFF" width="18" height="18" /> Computer Vision
 | Model | Role | Provider |
 |-------|------|----------|
 | **YOLOv11** | Real-time multi-object detection with bounding boxes | Oxlo.ai |
 
-### 🎨 Image Generation
+### <img src="https://api.iconify.design/lucide/sparkles.svg?color=%2300AAFF" width="18" height="18" /> Image Generation
 | Model | Role | Provider |
 |-------|------|----------|
 | **Oxlo Image Pro** | Primary image gen: text2img + img2img (camera to styled portrait) | Oxlo.ai |
