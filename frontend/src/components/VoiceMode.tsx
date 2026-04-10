@@ -31,12 +31,7 @@ const MODEL_INFO: Record<ImageModel, { label: string; icon: typeof Crown; tier: 
   'flux.1-schnell': { label: 'Flux.1 Schnell', icon: Zap, tier: 'Fast' },
 };
 
-// Each suggestion carries a mode tag so we can style it differently
-const PROMPT_SUGGESTIONS: { text: string; mode: 'image' | 'voice'; label: string }[] = [
-  { text: 'Say: Create a futuristic city at night', mode: 'voice', label: 'Say' },
-  { text: 'A Japanese garden in spring', mode: 'image', label: 'Type or say' },
-  { text: 'Say: astronaut playing guitar on Mars', mode: 'voice', label: 'Say' },
-];
+
 
 export default function VoiceMode() {
   const { state: recState, audioBlob, start, stop, reset } = useVoiceRecorder();

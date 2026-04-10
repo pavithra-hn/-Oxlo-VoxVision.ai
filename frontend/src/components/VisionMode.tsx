@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Camera, CameraOff, ScanEye, Volume2, Bot, Loader2, Maximize2,
+  Camera, ScanEye, Volume2, Bot, Loader2, Maximize2,
   Wand2, BookOpen, Clapperboard, Send, X, Download,
   Sparkles, Globe, Eye, Mic, MicOff,
-  Zap, Film, PenTool, ImagePlus, RefreshCw,
+  Zap, Film, PenTool, RefreshCw,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useWebcam } from '../hooks/useWebcam';
