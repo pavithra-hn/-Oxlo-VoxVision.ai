@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Oxlo-voxvision.ai — Multimodal AI Assistant | Voice, Vision & Image Generation</title>
+    <meta name="description" content="Oxlo-voxvision.ai merges real-time computer vision, multilingual voice interaction, and AI image generation into a single multimodal assistant — powered by the Oxlo.ai multi-model API. Built for the Oxlo.ai Hackathon 2026." />
+    <meta name="keywords" content="AI assistant, multimodal, voice, vision, image generation, Oxlo.ai, hackathon, multilingual, computer vision, Oxlo-voxvision" />
+    <meta name="author" content="Pavithra H N" />
+    <meta name="theme-color" content="#05070D" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/logo-icon.png" />
+    <link rel="apple-touch-icon" href="/logo-icon.png" />
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Oxlo-voxvision.ai — See. Hear. Speak. Generate." />
+    <meta property="og:description" content="A multimodal AI assistant with real-time computer vision, multilingual voice, and AI image generation — powered by the Oxlo.ai multi-model API." />
+    <meta property="og:image" content="/logo-banner.png" />
+    <meta property="og:url" content="https://github.com/pavithra-hn/-Oxlo-voxvision.ai" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Oxlo-voxvision.ai — See. Hear. Speak. Generate." />
+    <meta name="twitter:description" content="Multimodal AI with Voice, Vision & Image Generation — built for the Oxlo.ai Hackathon." />
+    <meta name="twitter:image" content="/logo-banner.png" />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        surface: "#05070D",
+                        "surface-dim": "#0a0e16",
+                        "surface-low": "#0d1117",
+                        "surface-mid": "#111622",
+                        "surface-high": "#181e2e",
+                        "surface-highest": "#1f2738",
+                        accent: "#00AAFF",
+                        "accent-dark": "#0088CC",
+                        "accent-dim": "rgba(0,170,255,0.12)",
+                        "accent-glow": "rgba(0,170,255,0.4)",
+                        "text-primary": "#e0f0ff",
+                        "text-secondary": "rgba(0,170,255,0.6)",
+                        "text-muted": "rgba(0,170,255,0.3)",
+                        "border-subtle": "rgba(0,170,255,0.12)",
+                        "border-hover": "rgba(0,170,255,0.25)",
+                        teal: "#00E5A0",
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "system-ui", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.75rem",
+                        lg: "1rem",
+                        xl: "1.5rem",
+                        "2xl": "2rem",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            background-color: #05070D;
+            color: #e0f0ff;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* Grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(0, 170, 255, 0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 170, 255, 0.15); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 170, 255, 0.3); }
+
+        ::selection {
+            background: rgba(0, 170, 255, 0.2);
+            color: #fff;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 170, 255, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(0, 170, 255, 0.4), 0 0 80px rgba(0, 170, 255, 0.15); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes wave-line {
+            0%, 100% { width: 33%; }
+            25% { width: 66%; }
+            50% { width: 45%; }
+            75% { width: 80%; }
+        }
+
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
+        }
+
+        /* Eye blink animation */
+        @keyframes eye-blink {
+            0%, 42%, 44%, 88%, 100% {
+                clip-path: inset(0 0 0 0);
+                filter: drop-shadow(0 0 12px rgba(0, 170, 255, 0.5));
+            }
+            43% {
+                clip-path: inset(45% 0 45% 0);
+                filter: drop-shadow(0 0 20px rgba(0, 170, 255, 0.8));
+            }
+            89% {
+                clip-path: inset(45% 0 45% 0);
+                filter: drop-shadow(0 0 20px rgba(0, 170, 255, 0.8));
+            }
+        }
+
+        @keyframes eye-glow-pulse {
+            0%, 42%, 44%, 88%, 100% {
+                opacity: 0;
+            }
+            43%, 89% {
+                opacity: 1;
+            }
+        }
+
+        .animate-eye-blink {
+            animation: eye-blink 5s ease-in-out infinite, float 6s ease-in-out infinite;
+        }
+
+        /* The blink line that sweeps across */
+        .eye-blink-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(0, 170, 255, 0.8), rgba(0, 229, 160, 0.6), rgba(0, 170, 255, 0.8), transparent);
+            transform: translateY(-50%) scaleX(0);
+            animation: eye-glow-pulse 5s ease-in-out infinite;
+            border-radius: 999px;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.6), 0 0 30px rgba(0, 170, 255, 0.3);
+        }
+
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+        .animate-shimmer {
+            background: linear-gradient(90deg, transparent 0%, rgba(0,170,255,0.08) 50%, transparent 100%);
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        .animate-fade-in-up {
+            animation: fade-in-up 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+
+        .wave-bar {
+            animation: wave-line 2s ease-in-out infinite;
+        }
+        .wave-bar:nth-child(1) { animation-delay: 0s; }
+        .wave-bar:nth-child(2) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.6s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.9s; }
+
+        .glass-card {
+            background: rgba(5, 7, 13, 0.6);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(0, 170, 255, 0.1);
+            
+            /* Initial Animation State */
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+            
+            /* Flowing Transition Strategy */
+            transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                        transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                        box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+            cursor: pointer;
+        }
+
+        .glass-card.in-view {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .glass-card.in-view:hover {
+            border-color: rgba(0, 170, 255, 0.4);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6), 
+                        0 0 40px rgba(0,170,255,0.15), 
+                        inset 0 1px 1px rgba(0,170,255,0.2);
+            background: rgba(8, 20, 35, 0.9);
+            transform: translateY(-8px) scale(1.04);
+            z-index: 10;
+        }
+
+        .glass-card.in-view:active {
+            transform: translateY(-2px) scale(0.98);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4), inset 0 0 40px rgba(0,170,255,0.3);
+            background: rgba(0, 100, 200, 0.4);
+            border-color: rgba(0, 170, 255, 0.8);
+            transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background 0.1s;
+        }
+
+        /* CTA glow */
+        .cta-glow {
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-glow::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #00AAFF, #00E5A0, #00AAFF);
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .cta-glow:hover::before {
+            opacity: 0.6;
+        }
+
+        /* Oval pill button */
+        .btn-pill {
+            border-radius: 999px;
+            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-pill::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.35s;
+        }
+        .btn-pill-primary {
+            background: linear-gradient(135deg, #00AAFF, #0088dd);
+        }
+        .btn-pill-primary:hover {
+            box-shadow: 0 0 30px rgba(0,170,255,0.4), 0 8px 25px rgba(0,170,255,0.2);
+            transform: translateY(-2px) scale(1.03);
+        }
+        .btn-pill-primary:active { transform: scale(0.97); }
+        .btn-pill-secondary {
+            background: rgba(0,170,255,0.08);
+            border: 1px solid rgba(0,170,255,0.2);
+            color: #e0f0ff;
+        }
+        .btn-pill-secondary:hover {
+            border-color: rgba(0,170,255,0.4);
+            box-shadow: 0 0 20px rgba(0,170,255,0.15), 0 8px 25px rgba(0,0,0,0.3);
+            transform: translateY(-2px) scale(1.03);
+            background: rgba(0,170,255,0.12);
+        }
+        .btn-pill-secondary:active { transform: scale(0.97); }
+
+        /* Logo glow */
+        .logo-glow {
+            filter: drop-shadow(0 0 12px rgba(0, 170, 255, 0.5));
+        }
+
+        /* Feature icon container */
+        .feature-icon {
+            background: linear-gradient(135deg, rgba(0,170,255,0.15), rgba(0,170,255,0.05));
+            border: 1px solid rgba(0,170,255,0.15);
+        }
+
+        /* Model chip */
+        .model-chip {
+            background: rgba(0, 170, 255, 0.08);
+            border: 1px solid rgba(0, 170, 255, 0.15);
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(0, 170, 255, 0.8);
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        .model-chip:hover {
+            background: rgba(0, 170, 255, 0.15);
+            border-color: rgba(0, 170, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0,170,255,0.15);
+            transform: translateY(-2px);
+            color: rgba(0, 170, 255, 1);
+        }
+
+        /* Lang pill */
+        .lang-pill {
+            background: rgba(0, 229, 160, 0.08);
+            border: 1px solid rgba(0, 229, 160, 0.15);
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(0, 229, 160, 0.85);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        .lang-pill:hover {
+            background: rgba(0, 229, 160, 0.15);
+            border-color: rgba(0, 229, 160, 0.35);
+            box-shadow: 0 0 15px rgba(0,229,160,0.12);
+            transform: translateY(-2px) scale(1.05);
+            color: rgba(0, 229, 160, 1);
+        }
+
+        /* Smooth scroll */
+        html { scroll-behavior: smooth; }
+
+        /* ════════════════════════════════════════════════════════════ */
+        /* LIGHT MODE — comprehensive overrides                        */
+        /* ════════════════════════════════════════════════════════════ */
+
+        /* ── Base ──────────────────────────────────────────────────── */
+        html.light body {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+        html.light body::before {
+            background-image: radial-gradient(circle, rgba(0,100,200,0.06) 1px, transparent 1px) !important;
+        }
+
+        /* ── Nav bar (overrides inline style) ──────────────────────── */
+        html.light nav#top-nav {
+            background: rgba(255,255,255,0.9) !important;
+            border-bottom: 1px solid rgba(0,0,0,0.08) !important;
+            backdrop-filter: blur(20px) !important;
+        }
+        html.light #mobile-menu {
+            background: rgba(255,255,255,0.95) !important;
+            border-bottom-color: rgba(0,0,0,0.08) !important;
+        }
+
+        /* ── All text color utilities ──────────────────────────────── */
+        html.light .text-text-primary   { color: #0f172a !important; }
+        html.light .text-text-secondary { color: #0066bb !important; }
+        html.light .text-text-muted     { color: #3388cc !important; }
+        html.light .text-white          { color: #0f172a !important; }
+        html.light .text-slate-100      { color: #0f172a !important; }
+        html.light .text-slate-200      { color: #1e293b !important; }
+        html.light .text-slate-300      { color: #334155 !important; }
+        html.light .text-slate-400      { color: #475569 !important; }
+        html.light .text-slate-500      { color: #475569 !important; }
+        html.light .text-slate-600      { color: #334155 !important; }
+        html.light .text-accent         { color: #0066cc !important; }
+        html.light .text-teal           { color: #008855 !important; }
+
+        /* ── Background utilities ──────────────────────────────────── */
+        html.light .bg-surface,
+        html.light .bg-\[\#05070D\],
+        html.light .bg-\[\#0A0D15\] {
+            background-color: #f8fafc !important;
+        }
+        html.light .bg-surface-low,
+        html.light .bg-surface-mid,
+        html.light .bg-surface-high,
+        html.light .bg-surface-highest,
+        html.light .bg-gray-800,
+        html.light .bg-gray-900 {
+            background-color: #f1f5f9 !important;
+        }
+
+        /* ── Border utilities ──────────────────────────────────────── */
+        html.light .border-white\/5,
+        html.light .border-slate-700\/50,
+        html.light .border-slate-800,
+        html.light .border-border-subtle {
+            border-color: rgba(0,0,0,0.1) !important;
+        }
+
+        /* ── Glass cards ───────────────────────────────────────────── */
+        html.light .glass-card {
+            background: rgba(255,255,255,0.85) !important;
+            border-color: rgba(0,0,0,0.08) !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+        }
+        html.light .glass-card.in-view:hover {
+            background: #ffffff !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+            border-color: rgba(0,100,200,0.25) !important;
+        }
+
+        /* ── Hero CTA buttons ──────────────────────────────────────── */
+        html.light .btn-pill-secondary {
+            background: rgba(0,100,200,0.08) !important;
+            border: 1px solid rgba(0,100,200,0.25) !important;
+            color: #0f172a !important;
+        }
+        html.light .btn-pill-secondary:hover {
+            background: rgba(0,100,200,0.12) !important;
+            border-color: rgba(0,100,200,0.4) !important;
+        }
+
+        /* ── Model chips ───────────────────────────────────────────── */
+        html.light .model-chip {
+            background: rgba(0,100,200,0.06) !important;
+            border-color: rgba(0,100,200,0.2) !important;
+            color: #0f5a8a !important;
+        }
+        html.light .model-chip:hover {
+            background: rgba(0,100,200,0.12) !important;
+            border-color: rgba(0,100,200,0.35) !important;
+            color: #004477 !important;
+        }
+
+        /* ── Language pills ────────────────────────────────────────── */
+        html.light .lang-pill {
+            background: rgba(0,180,120,0.06) !important;
+            border-color: rgba(0,180,120,0.2) !important;
+            color: #006644 !important;
+        }
+        html.light .lang-pill:hover {
+            background: rgba(0,180,120,0.12) !important;
+            border-color: rgba(0,180,120,0.35) !important;
+            color: #004d33 !important;
+        }
+
+        /* ── Language strip section (overrides inline dark bg) ──────── */
+        html.light section[style*="rgba(0,0,0,0.3)"] {
+            background: rgba(0,100,200,0.03) !important;
+            border-color: rgba(0,100,200,0.08) !important;
+        }
+
+        /* ── Feature icon containers ───────────────────────────────── */
+        html.light .feature-icon {
+            background: linear-gradient(135deg, rgba(0,100,200,0.08), rgba(0,100,200,0.03)) !important;
+            border-color: rgba(0,100,200,0.12) !important;
+        }
+
+        /* ── CTA pill glow ─────────────────────────────────────────── */
+        html.light .cta-glow::before {
+            opacity: 0.3 !important;
+        }
+
+        /* ── Inline-styled sections (How It Works, roadmap, etc.) ──── */
+        html.light section[style*="#05070D"],
+        html.light section[style*="#0A0D15"],
+        html.light div[style*="#05070D"],
+        html.light div[style*="#0A0D15"] {
+            background-color: #f8fafc !important;
+        }
+        html.light section[style*="rgba(5,7,13"],
+        html.light div[style*="rgba(5,7,13"] {
+            background: #f8fafc !important;
+        }
+
+        /* ── Roadmap pipeline boxes ────────────────────────────────── */
+        html.light .pipeline-step,
+        html.light [class*="pipeline"] {
+            background: rgba(255,255,255,0.9) !important;
+            border-color: rgba(0,0,0,0.1) !important;
+        }
+
+        /* ── Footer ────────────────────────────────────────────────── */
+        html.light footer {
+            background: #ffffff !important;
+            border-top-color: rgba(0,0,0,0.08) !important;
+        }
+
+        /* ── Scrollbar in light mode ───────────────────────────────── */
+        html.light ::-webkit-scrollbar-thumb {
+            background: rgba(0,100,200,0.15) !important;
+        }
+        html.light ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0,100,200,0.3) !important;
+        }
+
+        /* ── Selection highlight ───────────────────────────────────── */
+        html.light ::selection {
+            background: rgba(0,100,200,0.15) !important;
+            color: #000 !important;
+        }
+
+        /* ── Logo glow adjustment ──────────────────────────────────── */
+        html.light .logo-glow {
+            filter: drop-shadow(0 0 8px rgba(0,100,200,0.3)) !important;
+        }
+    </style>
+</head>
+<body class="relative">
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- TOP NAV BAR                                                      -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<nav id="top-nav" class="fixed top-0 w-full z-50 flex justify-between items-center h-16 px-6 md:px-8 mx-auto" style="background: rgba(5,7,13,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,170,255,0.08);">
+    <div class="flex items-center gap-8">
+        <!-- Logo -->
+        <a href="#" class="flex items-center gap-3 group">
+            <img src="/logo-icon.png" alt="Oxlo-voxvision.ai Logo" class="h-9 w-auto logo-glow transition-all duration-300 group-hover:scale-110" />
+            <div>
+                <span class="text-lg font-bold leading-tight text-text-primary">
+                    <span class="text-accent">Oxlo-voxvision.ai</span>
+                </span>
+            </div>
+        </a>
+
+        <!-- Nav Links (Desktop) -->
+        <div class="hidden md:flex items-center gap-6">
+            <a class="nav-scroll-link text-sm text-slate-400 hover:text-accent transition-colors duration-200 cursor-pointer" href="#features">Features</a>
+            <a class="nav-scroll-link text-sm text-slate-400 hover:text-accent transition-colors duration-200 cursor-pointer" href="#how-it-works">How It Works</a>
+            <a class="nav-scroll-link text-sm text-slate-400 hover:text-accent transition-colors duration-200 cursor-pointer" href="#models">Models</a>
+            <a class="nav-scroll-link text-sm text-slate-400 hover:text-accent transition-colors duration-200 cursor-pointer" href="#use-cases">Use Cases</a>
+        </div>
+    </div>
+    <div class="flex items-center gap-4">
+        <span class="hidden lg:inline text-[10px] font-medium uppercase tracking-widest text-slate-500">
+            Built for <a href="https://portal.oxlo.ai/" target="_blank" rel="noopener noreferrer" class="text-accent/70 hover:text-accent transition-colors">Oxlo.ai Hackathon</a>
+        </span>
+        <!-- LinkedIn Nav Icon -->
+        <a href="https://www.linkedin.com/in/pavithrahn56/" target="_blank" rel="noopener noreferrer" class="hidden sm:flex w-8 h-8 rounded-lg items-center justify-center text-slate-500 hover:text-accent transition-colors" style="background: rgba(0,170,255,0.06); border: 1px solid rgba(0,170,255,0.08);" title="LinkedIn">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <!-- GitHub Nav Icon -->
+        <a href="https://github.com/pavithra-hn/-Oxlo-voxvision.ai" target="_blank" rel="noopener noreferrer" class="hidden sm:flex w-8 h-8 rounded-lg items-center justify-center text-slate-500 hover:text-accent transition-colors" style="background: rgba(0,170,255,0.06); border: 1px solid rgba(0,170,255,0.08);" title="GitHub">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        </a>
+
+        <!-- Theme Toggle Button -->
+        <button id="theme-toggle" class="flex w-8 h-8 rounded-lg items-center justify-center text-slate-400 hover:text-accent transition-colors" style="background: rgba(0,170,255,0.06); border: 1px solid rgba(0,170,255,0.08);" title="Toggle Theme (System)">
+            <span id="theme-icon" class="material-symbols-outlined text-[18px]">brightness_auto</span>
+        </button>
+
+        <a href="/index.html" class="bg-accent text-surface px-5 py-2 rounded-xl font-bold text-sm hover:shadow-[0_0_25px_rgba(0,170,255,0.35)] transition-all active:scale-95">
+            Launch App
+        </a>
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-slate-400 hover:text-accent transition-colors" style="background: rgba(0,170,255,0.06); border: 1px solid rgba(0,170,255,0.08);" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+            <span class="material-symbols-outlined text-xl">menu</span>
+        </button>
+    </div>
+</nav>
+<!-- Mobile Menu Dropdown -->
+<div id="mobile-menu" class="hidden fixed top-16 left-0 right-0 z-40 px-6 py-4 md:hidden" style="background: rgba(5,7,13,0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,170,255,0.1);">
+    <div class="flex flex-col gap-4">
+        <a class="text-sm font-semibold text-accent py-2" href="#features" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Features</a>
+        <a class="text-sm text-slate-400 hover:text-accent py-2" href="#how-it-works" onclick="document.getElementById('mobile-menu').classList.add('hidden')">How It Works</a>
+        <a class="text-sm text-slate-400 hover:text-accent py-2" href="#models" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Models</a>
+        <a class="text-sm text-slate-400 hover:text-accent py-2" href="#use-cases" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Use Cases</a>
+        <a href="https://github.com/pavithra-hn/-Oxlo-voxvision.ai" target="_blank" rel="noopener noreferrer" class="text-sm text-slate-400 hover:text-accent py-2 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            GitHub
+        </a>
+        <a href="https://www.linkedin.com/in/pavithrahn56/" target="_blank" rel="noopener noreferrer" class="text-sm text-slate-400 hover:text-accent py-2 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            LinkedIn
+        </a>
+        <a href="https://portal.oxlo.ai/" target="_blank" rel="noopener noreferrer" class="text-sm text-slate-400 hover:text-accent py-2 flex items-center gap-2">
+            <span class="material-symbols-outlined text-base">api</span>
+            Oxlo.ai Platform
+        </a>
+    </div>
+</div>
+
+<main class="pt-16 relative z-10">
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- HERO SECTION                                                      -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section id="hero" class="relative min-h-[100vh] flex items-center justify-center overflow-hidden px-6 md:px-8">
+    <!-- Background -->
+    <div class="absolute inset-0 z-0">
+        <div class="w-full h-full opacity-30 bg-[radial-gradient(ellipse_at_50%_40%,_rgba(0,170,255,0.2)_0%,_transparent_65%)]"></div>
+        <img class="w-full h-full object-cover mix-blend-screen opacity-20" src="/hero-bg.png" alt="Neural network hero background" />
+    </div>
+
+    <!-- Floating Particles (decorative) -->
+    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="absolute w-2 h-2 rounded-full bg-accent/30 top-[20%] left-[15%] animate-float" style="animation-delay: 0s;"></div>
+        <div class="absolute w-1.5 h-1.5 rounded-full bg-teal/30 top-[60%] left-[80%] animate-float" style="animation-delay: 1s;"></div>
+        <div class="absolute w-1 h-1 rounded-full bg-accent/20 top-[40%] left-[70%] animate-float" style="animation-delay: 2s;"></div>
+        <div class="absolute w-2.5 h-2.5 rounded-full bg-accent/20 top-[75%] left-[25%] animate-float" style="animation-delay: 1.5s;"></div>
+        <div class="absolute w-1 h-1 rounded-full bg-teal/25 top-[30%] left-[55%] animate-float" style="animation-delay: 0.5s;"></div>
+    </div>
+
+    <!-- Content -->
+    <div class="relative z-10 max-w-5xl text-center">
+        <!-- Status Badge -->
+        <a href="https://portal.oxlo.ai/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 animate-fade-in-up hover:border-accent/30 transition-colors" style="background: rgba(0,170,255,0.06); border: 1px solid rgba(0,170,255,0.15);">
+            <span class="w-2 h-2 rounded-full bg-teal animate-pulse"></span>
+            <span class="text-[11px] font-bold tracking-[0.15em] uppercase text-text-secondary">Oxlo.ai Hackathon Project</span>
+        </a>
+
+        <!-- Logo Float with Blink Animation -->
+        <div class="flex justify-center mb-8 animate-fade-in-up delay-100">
+            <div class="relative inline-block">
+                <img src="/logo-icon.png" alt="Oxlo-voxvision Logo" class="h-24 md:h-32 w-auto animate-eye-blink" />
+                <div class="eye-blink-line"></div>
+            </div>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-text-primary mb-6 leading-[1.08] animate-fade-in-up delay-200">
+            See. Hear. Speak.<br />
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-teal">Generate.</span>
+        </h1>
+
+        <!-- Subhead -->
+        <p class="text-base sm:text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light animate-fade-in-up delay-300">
+            Oxlo-voxvision.ai merges real-time computer vision, multilingual voice interaction, and AI image generation into a single multimodal assistant, powered by the <a href="https://portal.oxlo.ai/" target="_blank" rel="noopener noreferrer" class="text-accent/80 font-semibold hover:text-accent transition-colors">Oxlo.ai multi-model API</a>.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up delay-400">
+            <a href="/index.html" class="btn-pill btn-pill-primary text-surface px-10 py-4 text-lg font-bold w-full sm:w-auto text-center">
+                Try Oxlo-voxvision.ai
+            </a>
+            <a href="#features" class="btn-pill btn-pill-secondary px-10 py-4 text-lg font-semibold w-full sm:w-auto text-center">
+                Explore Features
+            </a>
+        </div>
+
+        <!-- Model Chips -->
+        <div class="flex flex-wrap justify-center gap-2 mt-12 animate-fade-in-up delay-500">
+            <span class="model-chip">Kimi K2.5</span>
+            <span class="model-chip">Qwen 3 32B</span>
+            <span class="model-chip">DeepSeek R1 70B</span>
+            <span class="model-chip">Llama 4 Maverick</span>
+            <span class="model-chip">Ministral 14B</span>
+            <span class="model-chip">Kokoro 82M</span>
+            <span class="model-chip">YOLOv11</span>
+            <span class="model-chip">Oxlo Image Pro</span>
+            <span class="model-chip">FLUX.1 Schnell</span>
+            <span class="model-chip">Sarvam Saaras v3</span>
+            <span class="model-chip">Groq Whisper</span>
+            <span class="model-chip">gTTS</span>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- LANGUAGE SUPPORT STRIP                                            -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section class="py-12 overflow-hidden" style="background: rgba(0,0,0,0.3); border-top: 1px solid rgba(0,229,160,0.06); border-bottom: 1px solid rgba(0,229,160,0.06);">
+    <div class="max-w-7xl mx-auto px-6 md:px-8">
+        <div class="flex items-center justify-center gap-3 mb-6">
+            <span class="material-symbols-outlined text-teal/60 text-lg">translate</span>
+            <p class="text-[10px] font-bold tracking-[0.3em] uppercase text-center text-slate-600">Multilingual Support · 8 Languages · Native Script Output</p>
+        </div>
+        <div class="flex flex-wrap justify-center items-center gap-3">
+            <span class="lang-pill">🇬🇧 English</span>
+            <span class="lang-pill">🇮🇳 हिन्दी</span>
+            <span class="lang-pill">🇮🇳 ಕನ್ನಡ</span>
+            <span class="lang-pill">🇮🇳 தமிழ்</span>
+            <span class="lang-pill">🇮🇳 తెలుగు</span>
+            <span class="lang-pill">🇪🇸 Español</span>
+            <span class="lang-pill">🇫🇷 Français</span>
+            <span class="lang-pill">🇯🇵 日本語</span>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- FEATURES BENTO GRID                                               -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section id="features" class="py-24 md:py-32 px-6 md:px-8 max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+        <div class="max-w-2xl">
+            <span class="text-accent font-bold tracking-widest text-xs uppercase mb-4 block">Core Capabilities</span>
+            <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight text-text-primary">Four Modalities.<br/>One Interface.</h2>
+        </div>
+        <div class="text-slate-400 text-sm font-medium border-l border-accent/15 pl-6 max-w-xs leading-relaxed">
+            Voice, vision, text, and image generation, unified through a single Oxlo.ai API key with an OpenAI-compatible endpoint.
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+
+        <!-- ── Voice Mode Card (Large) ──────────────────────────── -->
+        <div class="md:col-span-8 glass-card rounded-2xl overflow-hidden group">
+            <div class="p-8 md:p-10 flex flex-col h-full">
+                <div class="mb-auto">
+                    <div class="w-12 h-12 rounded-xl feature-icon flex items-center justify-center mb-6">
+                        <span class="material-symbols-outlined text-accent text-2xl">mic</span>
+                    </div>
+                    <h3 class="text-2xl md:text-3xl font-bold mb-3 text-text-primary">Voice Mode</h3>
+                    <p class="text-slate-400 leading-relaxed max-w-lg text-sm">
+                        Full-duplex voice assistant with hold-to-speak recording, dual-engine STT (Sarvam AI + Groq Whisper), anti-hallucination LLM responses, compound image generation, and language-aware TTS routing. Kokoro for English, gTTS for Indic languages.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mt-4">
+                        <span class="text-[11px] px-2.5 py-1 rounded-full font-semibold" style="background:rgba(0,229,160,0.08); color: rgba(0,229,160,0.8);">Anti-Hallucination</span>
+                        <span class="text-[11px] px-2.5 py-1 rounded-full font-semibold" style="background:rgba(0,170,255,0.08); color: rgba(0,170,255,0.8);">Compound Requests</span>
+                        <span class="text-[11px] px-2.5 py-1 rounded-full font-semibold" style="background:rgba(0,170,255,0.08); color: rgba(0,170,255,0.8);">Intent Classification</span>
+                        <span class="text-[11px] px-2.5 py-1 rounded-full font-semibold" style="background:rgba(168,85,247,0.08); color: rgba(168,85,247,0.8);">🎨 Image Generation</span>
+                    </div>
+                </div>
+                <!-- Voice Waveform Visualization -->
+                <div class="mt-10 p-6 rounded-xl" style="background: rgba(0,170,255,0.04); border: 1px solid rgba(0,170,255,0.08);">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-accent text-lg">graphic_eq</span>
+                        </div>
+                        <span class="text-xs font-semibold text-accent/70 uppercase tracking-wider">Live Pipeline</span>
+                    </div>
+                    <div class="space-y-2.5">
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] font-semibold text-slate-500 w-8">STT</span>
+                            <div class="h-1.5 bg-surface-mid rounded-full overflow-hidden flex-1">
+                                <div class="h-full bg-gradient-to-r from-accent to-teal rounded-full wave-bar"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] font-semibold text-slate-500 w-8">LLM</span>
+                            <div class="h-1.5 bg-surface-mid rounded-full overflow-hidden flex-1">
+                                <div class="h-full bg-gradient-to-r from-accent to-teal rounded-full wave-bar"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] font-semibold text-purple-500/60 w-8">IMG</span>
+                            <div class="h-1.5 bg-surface-mid rounded-full overflow-hidden flex-1">
+                                <div class="h-full bg-gradient-to-r from-purple-500 to-accent rounded-full wave-bar"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] font-semibold text-slate-500 w-8">TTS</span>
+                            <div class="h-1.5 bg-surface-mid rounded-full overflow-hidden flex-1">
+                                <div class="h-full bg-gradient-to-r from-teal to-accent rounded-full wave-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Vision Mode Card ────────────────────────────────── -->
+        <div class="md:col-span-4 glass-card rounded-2xl p-8 md:p-10 flex flex-col">
+            <div class="w-12 h-12 rounded-xl feature-icon flex items-center justify-center mb-6">
+                <span class="material-symbols-outlined text-accent text-2xl">visibility</span>
+            </div>
+            <h3 class="text-2xl md:text-3xl font-bold mb-3 text-text-primary">Vision Mode</h3>
+            <p class="text-slate-400 leading-relaxed text-sm mb-6">
+                Live webcam AI that greets you by appearance, answers visual questions, generates images from your camera, and intelligently routes between vision, image gen, and text chat.
+            </p>
+            <div class="mt-auto space-y-3">
+                <div class="flex items-center gap-2 text-xs text-slate-400">
+                    <span class="material-symbols-outlined text-teal text-base">check_circle</span>
+                    Personalized visual greeting
+                </div>
+                <div class="flex items-center gap-2 text-xs text-slate-400">
+                    <span class="material-symbols-outlined text-teal text-base">check_circle</span>
+                    Smart Intent Router (Vision / Image / Voice)
+                </div>
+                <div class="flex items-center gap-2 text-xs text-slate-400">
+                    <span class="material-symbols-outlined text-teal text-base">check_circle</span>
+                    🎨 Image Generation (anime, cartoon, styles)
+                </div>
+                <div class="flex items-center gap-2 text-xs text-slate-400">
+                    <span class="material-symbols-outlined text-teal text-base">check_circle</span>
+                    YOLOv11 object detection
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Creative Features + Image Gen Card ──────────────────────────── -->
+        <div class="md:col-span-4 glass-card rounded-2xl p-8 md:p-10 flex flex-col">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6" style="background: linear-gradient(135deg, rgba(0,229,160,0.15), rgba(0,229,160,0.05)); border: 1px solid rgba(0,229,160,0.15);">
+                <span class="material-symbols-outlined text-teal text-2xl">auto_awesome</span>
+            </div>
+            <h3 class="text-2xl md:text-3xl font-bold mb-3 text-text-primary">Creative Vision</h3>
+            <p class="text-slate-400 leading-relaxed text-sm mb-8">
+                Four AI-powered creative features that transform your camera into a creative studio.
+            </p>
+            <div class="space-y-4 mt-auto">
+                <div class="p-3 rounded-lg" style="background: rgba(0,170,255,0.04); border: 1px solid rgba(0,170,255,0.08);">
+                    <span class="text-xs font-bold text-accent/90">🎨 Image Generation</span>
+                    <p class="text-[11px] text-slate-500 mt-1">"Make me anime" — detects your face, generates styled portrait</p>
+                </div>
+                <div class="p-3 rounded-lg" style="background: rgba(0,229,160,0.04); border: 1px solid rgba(0,229,160,0.08);">
+                    <span class="text-xs font-bold text-teal/90">🌊 What If</span>
+                    <p class="text-[11px] text-slate-500 mt-1">Reimagine any scene: "What if this was underwater?"</p>
+                </div>
+                <div class="p-3 rounded-lg" style="background: rgba(0,229,160,0.04); border: 1px solid rgba(0,229,160,0.08);">
+                    <span class="text-xs font-bold text-teal/90">📖 Biographies</span>
+                    <p class="text-[11px] text-slate-500 mt-1">AI-written origin stories for any detected object</p>
+                </div>
+                <div class="p-3 rounded-lg" style="background: rgba(0,229,160,0.04); border: 1px solid rgba(0,229,160,0.08);">
+                    <span class="text-xs font-bold text-teal/90">🎬 Director</span>
+                    <p class="text-[11px] text-slate-500 mt-1">Turns your camera view into a movie poster</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Architecture Card (Wide) ────────────────────────── -->
+        <div class="md:col-span-8 glass-card rounded-2xl overflow-hidden flex flex-col md:flex-row items-stretch">
+            <div class="p-8 md:p-10 md:w-1/2 flex flex-col justify-center">
+                <h3 class="text-2xl md:text-3xl font-bold mb-4 text-text-primary">One API. All Models.</h3>
+                <p class="text-slate-400 leading-relaxed text-sm mb-6">
+                    The entire system (Kimi K2.5, Qwen 3, Kokoro 82M, YOLOv11, FLUX.1 Schnell, and Oxlo Image Pro) runs through a single <a href="https://portal.oxlo.ai/" target="_blank" rel="noopener noreferrer" class="text-accent/80 font-semibold hover:text-accent transition-colors">Oxlo.ai API key</a> with an OpenAI-compatible endpoint. No stitching. No multi-provider chaos.
+                </p>
+                <ul class="space-y-2.5">
+                    <li class="flex items-center gap-2 text-sm text-slate-400">
+                        <span class="material-symbols-outlined text-accent text-base">bolt</span>
+                        Parallel async processing
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-slate-400">
+                        <span class="material-symbols-outlined text-accent text-base">sync</span>
+                        Rate-limit aware model fallback
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-slate-400">
+                        <span class="material-symbols-outlined text-accent text-base">speed</span>
+                        Sub-100ms vision latency
+                    </li>
+                </ul>
+            </div>
+            <div class="md:w-1/2 min-h-[280px] relative">
+                <img class="w-full h-full object-cover" src="/architecture-globe.png" alt="Global AI infrastructure network" />
+                <div class="absolute inset-0 bg-gradient-to-r from-surface-dim via-transparent to-transparent"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- HOW IT WORKS                                                      -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section id="how-it-works" class="py-24 md:py-32 px-6 md:px-8" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 100%);">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <span class="text-accent font-bold tracking-widest text-xs uppercase mb-4 block">Pipeline Architecture</span>
+            <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight text-text-primary">How It Works</h2>
+        </div>
+
+        <!-- Voice Pipeline Steps -->
+        <div class="mb-16">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 rounded-full bg-accent/15 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-accent text-xl">mic</span>
+                </div>
+                <h3 class="text-xl font-bold text-text-primary">Voice Pipeline</h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div class="glass-card rounded-xl p-6">
+                    <div class="text-accent/40 text-4xl font-black mb-3">01</div>
+                    <h4 class="text-sm font-bold text-text-primary mb-2">Capture Audio</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">Hold-to-speak mic records WebM audio in the browser via MediaRecorder API.</p>
+                </div>
+                <div class="glass-card rounded-xl p-6">
+                    <div class="text-accent/40 text-4xl font-black mb-3">02</div>
+                    <h4 class="text-sm font-bold text-text-primary mb-2">Dual-Engine STT</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">Sarvam Saaras v3 primary (Indic-optimized) + Groq Whisper fallback with quality arbitration.</p>
+                </div>
+                <div class="glass-card rounded-xl p-6">
+                    <div class="text-accent/40 text-4xl font-black mb-3">03</div>
+                    <h4 class="text-sm font-bold text-text-primary mb-2">LLM + Validation</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">Qwen 3 32B generates response. Anti-hallucination system validates & retries up to 2x.</p>
+                </div>
+                <div class="glass-card rounded-xl p-6" style="border: 1px solid rgba(168,85,247,0.15); background: rgba(168,85,247,0.03);">
+                    <div class="text-purple-400/40 text-4xl font-black mb-3">04</div>
+                    <h4 class="text-sm font-bold text-text-primary mb-2">Image Generation</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">For compound requests, Oxlo Image Pro generates an image in parallel with structured text.</p>
+                </div>
+                <div class="glass-card rounded-xl p-6">
+                    <div class="text-accent/40 text-4xl font-black mb-3">05</div>
+                    <h4 class="text-sm font-bold text-text-primary mb-2">TTS Playback</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">Kokoro 82M for English, gTTS for Indic. Language-aware routing ensures native pronunciation.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vision Pipeline Steps (Updated with Intent Router + Image Gen) -->
+        <div>
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 rounded-full bg-accent/15 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-accent text-xl">visibility</span>
+                </div>
+                <h3 class="text-xl font-bold text-text-primary">Vision Pipeline</h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div class="glass-card rounded-xl p-6">
+                    <div class="text-teal/40 text-4xl font-black mb-3">01</div>
+                    <h4 class="text-sm font-bold text-text-primary mb-2">Camera Opens</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">Browser requests webcam, 1.5s warm-up, then auto-captures the first frame for greeting analysis.</p>
+                </div>
+                <div class="glass-card rounded-xl p-6">
+                    <div class="text-teal/40 text-4xl font-black mb-3">02</div>
+                    <h4 class="text-sm font-bold text-text-primary mb-2">AI Greeting</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">Vision LLM analyzes your appearance (clothing, expression, environment) and speaks a personalized greeting.</p>
+                </div>
+                <div class="glass-card rounded-xl p-6" style="border: 1px solid rgba(0,170,255,0.15); background: rgba(0,170,255,0.03);">
+                    <div class="text-accent/40 text-4xl font-black mb-3">03</div>
+                    <h4 class="text-sm font-bold text-text-primary mb-2">Intent Router</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">Hybrid keyword+regex router classifies intent into: <span class="text-accent font-semibold">Vision</span>, <span class="text-accent font-semibold">Image Gen</span>, or <span class="text-accent font-semibold">Text Chat</span>.</p>
+                </div>
+                <div class="glass-card rounded-xl p-6" style="border: 1px solid rgba(0,229,160,0.15); background: rgba(0,229,160,0.03);">
+                    <div class="text-teal/40 text-4xl font-black mb-3">04</div>
+                    <h4 class="text-sm font-bold text-text-primary mb-2">🎨 Image Generation</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">Camera frame sent directly to <span class="text-teal font-semibold">Oxlo Image Pro</span> via img2img (<code class="text-[10px]">/v1/images/edits</code>). Fallback: <span class="text-slate-400">FLUX.1 Schnell</span>. 17 style presets with optimized strength values.</p>
+                </div>
+                <div class="glass-card rounded-xl p-6">
+                    <div class="text-teal/40 text-4xl font-black mb-3">05</div>
+                    <h4 class="text-sm font-bold text-text-primary mb-2">Render + Speak</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">Generated image renders in chat with download/regenerate actions. YOLOv11 detections overlay on the live feed.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- MODELS & TECH STACK                                               -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section id="models" class="py-24 md:py-32 px-6 md:px-8 max-w-7xl mx-auto">
+    <div class="text-center mb-20">
+        <span class="text-accent font-bold tracking-widest text-xs uppercase mb-4 block">Architecture & Workflows</span>
+        <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight text-text-primary">System AI Roadmaps</h2>
+        <p class="text-slate-400 text-sm mt-4 max-w-xl mx-auto">Discover how multimodal inputs move through specialized AI engines in real-time, routed efficiently via Oxlo.ai and external networks.</p>
+    </div>
+
+    <!-- 1. VOICE ASSISTANT ROADMAP -->
+    <div class="mb-24">
+        <h3 class="text-xl font-bold text-white mb-8 flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent"><span class="material-symbols-outlined text-sm">record_voice_over</span></span>
+            Voice Assistant Pipeline
+        </h3>
+        
+        <!-- Desktop Horizontal / Mobile Vertical Flex -->
+        <div class="flex flex-col lg:flex-row items-center lg:items-stretch gap-4 justify-between w-full relative">
+            
+            <!-- Step 1: Input -->
+            <div class="glass-card rounded-xl p-5 w-full lg:w-48 text-center flex flex-col items-center justify-center z-10 shrink-0">
+                <span class="material-symbols-outlined text-slate-400 text-3xl mb-2">mic</span>
+                <div class="text-sm font-bold text-white">Audio Input</div>
+                <div class="text-[10px] text-slate-500 mt-1">Native Language Speech</div>
+            </div>
+
+            <!-- Arrow -->
+            <div class="hidden lg:flex items-center justify-center text-slate-700">
+                <span class="material-symbols-outlined">arrow_right_alt</span>
+            </div>
+            <div class="lg:hidden text-slate-700 my-2">
+                <span class="material-symbols-outlined">arrow_downward</span>
+            </div>
+
+            <!-- Step 2: STT -->
+            <div class="glass-card rounded-xl p-5 w-full lg:w-56 flex flex-col justify-center z-10 shrink-0 border border-slate-800">
+                <div class="text-[9px] uppercase tracking-wider text-slate-500 font-bold mb-3 text-center">Speech to Text</div>
+                <div class="bg-[#0A0D15] rounded-lg p-3 text-center border border-white/5 relative">
+                    <div class="text-xs font-bold text-white mb-0.5">Sarvam Saaras v3</div>
+                    <div class="text-[9px] text-slate-400">Primary Indic STT</div>
+                </div>
+                <div class="bg-[#0A0D15] rounded-lg p-3 text-center border border-white/5 mt-2 opacity-60">
+                    <div class="text-xs font-bold text-white mb-0.5">Groq Whisper</div>
+                    <div class="text-[9px] text-slate-400">Fallback English STT</div>
+                </div>
+            </div>
+
+            <!-- Arrow -->
+            <div class="hidden lg:flex items-center justify-center text-accent">
+                <span class="material-symbols-outlined">arrow_right_alt</span>
+            </div>
+            <div class="lg:hidden text-accent my-2">
+                <span class="material-symbols-outlined">arrow_downward</span>
+            </div>
+
+            <!-- Step 3: LLM + Image Gen -->
+            <div class="glass-card rounded-xl p-5 w-full lg:w-56 flex flex-col justify-center z-10 shrink-0 border border-accent/20 bg-accent/[0.02]">
+                <div class="text-[9px] uppercase tracking-wider text-accent font-bold mb-3 text-center">Inference Engine</div>
+                <div class="bg-[#0A0D15] rounded-lg p-3 text-center border border-accent/20 relative">
+                    <div class="absolute -top-2.5 -right-2 bg-accent text-[#05070D] text-[8px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-widest shadow-[0_0_10px_rgba(0,170,255,0.4)]">Oxlo.ai API</div>
+                    <div class="text-sm font-bold text-white mb-0.5 mt-1">Qwen 3 32B</div>
+                    <div class="text-[9px] text-slate-400">Low-Latency Language Core</div>
+                </div>
+                <div class="bg-[#0A0D15] rounded-lg p-3 text-center border border-purple-500/20 mt-2 relative">
+                    <div class="absolute -top-2.5 -right-2 bg-purple-500 text-white text-[8px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-widest shadow-[0_0_10px_rgba(168,85,247,0.4)]">Compound</div>
+                    <div class="text-xs font-bold text-white mb-0.5 mt-1">Oxlo Image Pro</div>
+                    <div class="text-[9px] text-slate-400">Parallel Image Generation</div>
+                </div>
+                <div class="mt-3 text-[10px] text-slate-500 text-center leading-tight">
+                    Compound requests generate both image + structured text in parallel.
+                </div>
+            </div>
+
+            <!-- Arrow -->
+            <div class="hidden lg:flex items-center justify-center text-teal">
+                <span class="material-symbols-outlined">arrow_right_alt</span>
+            </div>
+            <div class="lg:hidden text-teal my-2">
+                <span class="material-symbols-outlined">arrow_downward</span>
+            </div>
+
+            <!-- Step 4: TTS -->
+            <div class="glass-card rounded-xl p-5 w-full lg:w-56 flex flex-col justify-center z-10 shrink-0 border border-teal/20 bg-teal/[0.02]">
+                <div class="text-[9px] uppercase tracking-wider text-teal font-bold mb-3 text-center">Text to Speech</div>
+                <div class="bg-[#0A0D15] rounded-lg p-3 text-center border border-teal/20 relative">
+                    <div class="absolute -top-2.5 -right-2 bg-teal text-[#05070D] text-[8px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-widest shadow-[0_0_10px_rgba(0,229,160,0.4)]">Oxlo.ai API</div>
+                    <div class="text-xs font-bold text-white mb-0.5 mt-1">Kokoro 82M</div>
+                    <div class="text-[9px] text-slate-400">English Neural Synthesis</div>
+                </div>
+                <div class="bg-[#0A0D15] rounded-lg p-3 text-center border border-white/5 mt-2 opacity-60">
+                    <div class="text-xs font-bold text-white mb-0.5">gTTS API</div>
+                    <div class="text-[9px] text-slate-400">Indic Translation TTS</div>
+                </div>
+            </div>
+
+            <!-- Arrow -->
+            <div class="hidden lg:flex items-center justify-center text-slate-700">
+                <span class="material-symbols-outlined">arrow_right_alt</span>
+            </div>
+            <div class="lg:hidden text-slate-700 my-2">
+                <span class="material-symbols-outlined">arrow_downward</span>
+            </div>
+
+            <!-- Step 5: Output -->
+            <div class="glass-card rounded-xl p-5 w-full lg:w-32 text-center flex flex-col items-center justify-center z-10 shrink-0">
+                <span class="material-symbols-outlined text-slate-400 text-3xl mb-2">speaker</span>
+                <div class="text-sm font-bold text-white">Playback</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. VISION ASSISTANT ROADMAP -->
+    <div class="mt-20">
+        <h3 class="text-xl font-bold text-white mb-8 flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-teal/20 flex items-center justify-center text-teal"><span class="material-symbols-outlined text-sm">visibility</span></span>
+            Vision Assistant Pipeline
+        </h3>
+        
+        <div class="flex flex-col lg:flex-row items-center lg:items-stretch gap-4 justify-between w-full relative">
+            
+            <!-- Step 1: Input -->
+            <div class="glass-card rounded-xl p-5 w-full lg:w-48 text-center flex flex-col items-center justify-center z-10 shrink-0">
+                <span class="material-symbols-outlined text-slate-400 text-3xl mb-2">videocam</span>
+                <div class="text-sm font-bold text-white">Webcam Stream</div>
+                <div class="text-[10px] text-slate-500 mt-1">Live frame capture</div>
+            </div>
+
+            <!-- Branching visual for desktop -->
+            <div class="hidden lg:flex flex-col justify-center items-center px-2">
+                <div class="w-[2px] h-full bg-slate-800"></div>
+            </div>
+            <div class="lg:hidden text-slate-700 my-2">
+                <span class="material-symbols-outlined">arrow_downward</span>
+            </div>
+
+            <!-- Step 2: Parallel Processing (Stacked) -->
+            <div class="w-full lg:w-[400px] flex flex-col gap-4 z-10 shrink-0">
+                <!-- YOLO -->
+                <div class="glass-card rounded-xl p-4 flex items-center gap-4 border border-teal/20 bg-teal/[0.02]">
+                    <div class="w-12 h-12 bg-[#0A0D15] rounded-xl flex items-center justify-center shrink-0 border border-teal/20 relative">
+                        <span class="material-symbols-outlined text-teal text-xl">center_focus_strong</span>
+                    </div>
+                    <div class="flex-1 text-left relative">
+                        <div class="absolute right-0 top-0 bg-teal text-[#05070D] text-[8px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-widest shadow-[0_0_10px_rgba(0,229,160,0.4)]">Oxlo.ai API</div>
+                        <div class="text-sm font-bold text-white pr-16 mt-0.5">YOLOv11</div>
+                        <div class="text-[10px] text-slate-400">Object Detection Bounding Boxes</div>
+                    </div>
+                </div>
+
+                <!-- Vision LLM -->
+                <div class="glass-card rounded-xl p-4 flex items-center gap-4 border border-accent/20 bg-accent/[0.02]">
+                    <div class="w-12 h-12 bg-[#0A0D15] rounded-xl flex items-center justify-center shrink-0 border border-accent/20">
+                        <span class="material-symbols-outlined text-accent text-xl">psychology</span>
+                    </div>
+                    <div class="flex-1 text-left relative">
+                        <div class="absolute right-0 top-0 bg-accent text-[#05070D] text-[8px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-widest shadow-[0_0_10px_rgba(0,170,255,0.4)]">Oxlo.ai API</div>
+                        <div class="text-sm font-bold text-white pr-16 mt-0.5">Kimi K2.5 Vision</div>
+                        <div class="text-[10px] text-slate-400">Scene Context & Greeting Analysis</div>
+                    </div>
+                </div>
+
+                <!-- Image Generation (NEW) -->
+                <div class="glass-card rounded-xl p-4 flex items-center gap-4 border border-purple-500/20 bg-purple-500/[0.02]">
+                    <div class="w-12 h-12 bg-[#0A0D15] rounded-xl flex items-center justify-center shrink-0 border border-purple-500/20">
+                        <span class="material-symbols-outlined text-purple-400 text-xl">palette</span>
+                    </div>
+                    <div class="flex-1 text-left relative">
+                        <div class="absolute right-0 top-0 bg-purple-500 text-white text-[8px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-widest shadow-[0_0_10px_rgba(168,85,247,0.4)]">img2img</div>
+                        <div class="text-sm font-bold text-white pr-16 mt-0.5">Oxlo Image Pro</div>
+                        <div class="text-[10px] text-slate-400">Camera → Styled Image (anime, cartoon, etc.)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branching Merge Output -->
+            <div class="hidden lg:flex flex-col justify-center items-center px-2">
+                <div class="w-[2px] h-full bg-slate-800"></div>
+            </div>
+            <div class="lg:hidden text-slate-700 my-2">
+                <span class="material-symbols-outlined">arrow_downward</span>
+            </div>
+
+            <!-- Step 3: Synthesis -->
+            <div class="glass-card rounded-xl p-5 w-full lg:w-48 text-center flex flex-col items-center justify-center z-10 shrink-0">
+                <span class="material-symbols-outlined text-accent text-3xl mb-2">join_inner</span>
+                <div class="text-sm font-bold text-white">Compound Context</div>
+                <div class="text-[10px] text-slate-500 mt-1">Merged JSON Response</div>
+            </div>
+
+            <!-- Arrow -->
+            <div class="hidden lg:flex items-center justify-center text-slate-700">
+                <span class="material-symbols-outlined">arrow_right_alt</span>
+            </div>
+            <div class="lg:hidden text-slate-700 my-2">
+                <span class="material-symbols-outlined">arrow_downward</span>
+            </div>
+
+            <!-- Step 4: Output -->
+            <div class="glass-card rounded-xl p-5 w-full lg:w-32 text-center flex flex-col items-center justify-center z-10 shrink-0 border border-white/5">
+                <span class="material-symbols-outlined text-green-400 text-3xl mb-2">display_settings</span>
+                <div class="text-sm font-bold text-white">Live UI Output</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 3. GENERAL TEXT / IMAGE ROADMAP -->
+    <div class="mt-20 border-t border-white/5 pt-16">
+        <h3 class="text-xl font-bold text-white mb-8 flex items-center justify-center lg:justify-start gap-3">
+            <span class="w-8 h-8 rounded-full bg-slate-800/50 flex items-center justify-center text-slate-400"><span class="material-symbols-outlined text-sm">hub</span></span>
+            General Capabilities (Standard APIs)
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full lg:w-3/4">
+            <!-- Text Chat LLM -->
+            <div class="glass-card rounded-xl p-5 flex items-start gap-4">
+                <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-accent">chat</span>
+                </div>
+                <div class="w-full">
+                    <div class="flex justify-between items-start w-full">
+                        <h4 class="text-sm font-bold text-text-primary">Text Inference</h4>
+                        <span class="bg-accent text-[#05070D] text-[8px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-widest shadow-[0_0_10px_rgba(0,170,255,0.4)]">Oxlo.ai API</span>
+                    </div>
+                    <div class="text-xs font-semibold text-slate-300 mt-2">Kimi K2.5 <span class="text-slate-600 font-normal ml-2">Primary Gen Chat</span></div>
+                    <div class="text-[10px] text-slate-500 mt-1">Fallback: DeepSeek R1 70B, Llama 4</div>
+                </div>
+            </div>
+
+            <!-- Image Generation -->
+            <div class="glass-card rounded-xl p-5 flex items-start gap-4">
+                <div class="w-10 h-10 rounded-lg bg-teal/10 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-teal">image</span>
+                </div>
+                <div class="w-full">
+                    <div class="flex justify-between items-start w-full">
+                        <h4 class="text-sm font-bold text-text-primary">Image Generation</h4>
+                        <span class="bg-teal text-[#05070D] text-[8px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-widest shadow-[0_0_10px_rgba(0,229,160,0.4)]">Oxlo.ai API</span>
+                    </div>
+                    <div class="text-xs font-semibold text-slate-300 mt-2">Oxlo Image Pro <span class="text-slate-600 font-normal ml-2">Text-to-Image + img2img</span></div>
+                    <div class="text-[10px] text-slate-500 mt-1">Fallback: FLUX.1 Schnell · 17 style presets</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- USE CASES                                                         -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section id="use-cases" class="py-24 md:py-32 px-6 md:px-8" style="background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, transparent 100%);">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <span class="text-teal font-bold tracking-widest text-xs uppercase mb-4 block">Real-World Applications</span>
+            <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight text-text-primary">Built For Real People</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div class="glass-card rounded-2xl p-7">
+                <span class="material-symbols-outlined text-[32px] mb-5 block text-accent" style="text-shadow: 0 0 20px rgba(0,170,255,0.4);">mic</span>
+                <h4 class="text-base font-bold text-text-primary mb-2">Personal Assistant</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">Hands-free voice assistant in English, Hindi, Kannada, Tamil, or Telugu. Ask anything, get recipes with steps, or have a natural conversation.</p>
+            </div>
+            <div class="glass-card rounded-2xl p-7">
+                <span class="material-symbols-outlined text-[32px] mb-5 block text-teal" style="text-shadow: 0 0 20px rgba(0,229,160,0.4);">checkroom</span>
+                <h4 class="text-base font-bold text-text-primary mb-2">Outfit & Interview Check</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">Open the camera before a meeting. The AI sees you and gives honest feedback on your outfit, grooming, and presentation.</p>
+            </div>
+            <div class="glass-card rounded-2xl p-7">
+                <span class="material-symbols-outlined text-[32px] mb-5 block text-accent" style="text-shadow: 0 0 20px rgba(0,170,255,0.4);">restaurant_menu</span>
+                <h4 class="text-base font-bold text-text-primary mb-2">Cooking Assistance</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">Point your camera at ingredients and ask "What can I cook with these?" The Vision LLM identifies items and suggests recipes.</p>
+            </div>
+            <div class="glass-card rounded-2xl p-7">
+                <span class="material-symbols-outlined text-[32px] mb-5 block text-teal" style="text-shadow: 0 0 20px rgba(0,229,160,0.4);">accessible</span>
+                <h4 class="text-base font-bold text-text-primary mb-2">Accessibility</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">Voice-first design with visual awareness. Point at objects, labels, or text and ask "What does this say?" to get spoken descriptions.</p>
+            </div>
+            <div class="glass-card rounded-2xl p-7">
+                <span class="material-symbols-outlined text-[32px] mb-5 block text-accent" style="text-shadow: 0 0 20px rgba(0,170,255,0.4);">school</span>
+                <h4 class="text-base font-bold text-text-primary mb-2">Education</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">Students ask academic questions in their native language (ಕನ್ನಡ, தமிழ், తెలుగు, हिन्दी) and receive answers in native script, never transliterated.</p>
+            </div>
+            <div class="glass-card rounded-2xl p-7">
+                <span class="material-symbols-outlined text-[32px] mb-5 block text-teal" style="text-shadow: 0 0 20px rgba(0,229,160,0.4);">movie</span>
+                <h4 class="text-base font-bold text-text-primary mb-2">Creative Content</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">Transform any scene into cyberpunk art, generate movie posters from a room, or write fictional backstories for random objects.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- DIFFERENTIATORS                                                    -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section class="py-24 md:py-32 px-6 md:px-8 max-w-7xl mx-auto">
+    <div class="text-center mb-16">
+        <span class="text-accent font-bold tracking-widest text-xs uppercase mb-4 block">Why Oxlo-voxvision</span>
+        <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight text-text-primary">What Makes It Different</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="glass-card rounded-2xl p-7 flex gap-4">
+            <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 mt-1">
+                <span class="material-symbols-outlined text-accent">visibility</span>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-text-primary mb-1">It can actually see you</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">When you ask "How am I looking?", it looks at you through the webcam and responds based on what it actually sees. Not a generic answer.</p>
+            </div>
+        </div>
+        <div class="glass-card rounded-2xl p-7 flex gap-4">
+            <div class="w-10 h-10 rounded-lg bg-teal/10 flex items-center justify-center shrink-0 mt-1">
+                <span class="material-symbols-outlined text-teal">psychology</span>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-text-primary mb-1">Knows when NOT to look</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">Vision Intent Classifier runs in &lt;1ms. "What is 2+2?" skips the camera entirely, saving 2–5 seconds of latency per turn.</p>
+            </div>
+        </div>
+        <div class="glass-card rounded-2xl p-7 flex gap-4">
+            <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 mt-1">
+                <span class="material-symbols-outlined text-accent">translate</span>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-text-primary mb-1">Native script, never transliterated</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">Kannada in ಕನ್ನಡ, Tamil in தமிழ், Telugu in తెలుగు, Hindi in हिन्दी. Both LLM output and TTS pronunciation are native.</p>
+            </div>
+        </div>
+        <div class="glass-card rounded-2xl p-7 flex gap-4">
+            <div class="w-10 h-10 rounded-lg bg-teal/10 flex items-center justify-center shrink-0 mt-1">
+                <span class="material-symbols-outlined text-teal">verified</span>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-text-primary mb-1">Anti-hallucination with retries</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">Domain-specific grounding (no butter in tea), post-generation validation, and automatic regeneration up to 2x when quality checks fail.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- CTA SECTION                                                       -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section class="py-24 md:py-32 px-6 md:px-8">
+    <div class="max-w-5xl mx-auto rounded-[2rem] p-10 md:p-20 text-center relative overflow-hidden" style="background: linear-gradient(135deg, rgba(0,170,255,0.15), rgba(0,229,160,0.08)); border: 1px solid rgba(0,170,255,0.2);">
+        <!-- Glow Effects -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-accent/10 blur-[100px] rounded-full"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-teal/10 blur-[100px] rounded-full"></div>
+
+        <div class="relative z-10">
+            <h2 class="text-3xl md:text-5xl lg:text-6xl font-black text-text-primary mb-6">Ready to see the future?</h2>
+            <p class="text-base md:text-lg text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+                Open the app, grant camera &amp; mic access, and start talking. Oxlo-voxvision.ai will hear you, see you, and respond in your language.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="/index.html" class="btn-pill btn-pill-primary text-surface px-10 py-5 text-lg font-bold text-center">
+                    Try Oxlo-voxvision.ai
+                </a>
+                <a href="https://github.com/pavithra-hn/-Oxlo-voxvision.ai" target="_blank" rel="noopener noreferrer" class="btn-pill btn-pill-secondary px-10 py-5 text-lg font-semibold flex items-center justify-center gap-3">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    View on GitHub
+                </a>
+            </div>
+            <!-- Developer Social Link -->
+            <div class="flex items-center justify-center mt-6">
+                <a href="https://www.linkedin.com/in/pavithrahn56/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-accent transition-all" style="background: rgba(0,170,255,0.04); border: 1px solid rgba(0,170,255,0.1);" onmouseover="this.style.borderColor='rgba(0,170,255,0.25)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.1)'">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    Connect on LinkedIn
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- TECH STACK FOOTER STRIP                                           -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section class="py-8 overflow-hidden" style="background: rgba(0,0,0,0.3); border-top: 1px solid rgba(0,170,255,0.06);">
+    <div class="max-w-7xl mx-auto px-6 md:px-8">
+        <div class="flex flex-wrap justify-center items-center gap-6 text-[11px] font-semibold text-slate-600">
+            <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-accent/50 text-sm">code</span> React 19
+            </span>
+            <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-accent/50 text-sm">terminal</span> FastAPI 0.115
+            </span>
+            <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-accent/50 text-sm">speed</span> Vite 8
+            </span>
+            <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-accent/50 text-sm">palette</span> Tailwind CSS 4
+            </span>
+            <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-accent/50 text-sm">code</span> TypeScript 5.9
+            </span>
+            <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-accent/50 text-sm">animation</span> Framer Motion
+            </span>
+            <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-accent/50 text-sm">code</span> Python 3.11
+            </span>
+            <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-accent/50 text-sm">hub</span> OpenAI SDK
+            </span>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- FOOTER                                                            -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<footer class="w-full py-10 px-6 md:px-8" style="background: #03050A; border-top: 1px solid rgba(0,170,255,0.06);">
+    <div class="max-w-7xl mx-auto">
+        <!-- Bottom row: Copyright -->
+        <div class="flex justify-center items-center">
+            <p class="text-[11px] text-slate-600">
+                © 2026 <a href="https://www.linkedin.com/in/pavithrahn56/" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors font-medium">Pavithra H N</a> · Built for the <a href="https://portal.oxlo.ai/" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors">Oxlo.ai Hackathon</a>
+            </p>
+        </div>
+    </div>
+</footer>
+
+<!-- Dynamic Intersection Observer Scripts -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const observerOptions = {
+            root: null,
+            rootMargin: '50px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            // Group intersecting entries to stagger them dynamically
+            const intersecting = entries.filter(entry => entry.isIntersecting);
+            intersecting.forEach((entry, index) => {
+                setTimeout(() => {
+                    entry.target.classList.add('in-view');
+                }, index * 120); // 120ms staggered flow for a musical rhythm
+                observer.unobserve(entry.target);
+            });
+        }, observerOptions);
+
+    // Observe glass-cards and highway-lanes for dynamic entry
+        document.querySelectorAll('.glass-card, .highway-lane').forEach(el => {
+            observer.observe(el);
+        });
+    });
+
+    // Theme Toggle Logic
+    const themeBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const modes = ['system', 'dark', 'light'];
+    
+    function applyTheme(mode) {
+        let isDark = false;
+        
+        // Remove old color classes
+        themeIcon.classList.remove('text-amber-500', 'text-blue-400', 'text-slate-400');
+        
+        if (mode === 'system') {
+            isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            themeIcon.textContent = 'brightness_auto';
+            themeIcon.classList.add('text-slate-400');
+            themeBtn.title = 'Theme: System';
+        } else if (mode === 'dark') {
+            isDark = true;
+            themeIcon.textContent = 'dark_mode';
+            themeIcon.classList.add('text-blue-400');
+            themeBtn.title = 'Theme: Dark';
+        } else {
+            isDark = false;
+            themeIcon.textContent = 'light_mode';
+            themeIcon.classList.add('text-amber-500');
+            themeBtn.title = 'Theme: Light';
+        }
+
+        const html = document.documentElement;
+        if (isDark) {
+            html.classList.add('dark');
+            html.classList.remove('light');
+        } else {
+            html.classList.add('light');
+            html.classList.remove('dark');
+        }
+    }
+
+    // Init Theme
+    let currentModeIndex = modes.indexOf(localStorage.getItem('Oxlo-voxvision_theme') || 'system');
+    if (currentModeIndex === -1) currentModeIndex = 0;
+    applyTheme(modes[currentModeIndex]);
+
+    themeBtn.addEventListener('click', () => {
+        currentModeIndex = (currentModeIndex + 1) % modes.length;
+        const newMode = modes[currentModeIndex];
+        localStorage.setItem('Oxlo-voxvision_theme', newMode);
+        applyTheme(newMode);
+    });
+
+    // Listen to system changes if we are on system mode
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (modes[currentModeIndex] === 'system') {
+            applyTheme('system');
+        }
+    });
+
+    // Navbar ScrollSpy Logic
+    const navLinks = document.querySelectorAll('.nav-scroll-link');
+    const sections = Array.from(navLinks).map(link => document.querySelector(link.getAttribute('href')));
+    
+    function updateNavHighlight() {
+        let currentActive = null;
+        let scrollY = window.scrollY;
+
+        // Find the section currently in view
+        sections.forEach(section => {
+            if (!section) return;
+            const sectionTop = section.offsetTop - 150; // offset for navbar
+            if (scrollY >= sectionTop) {
+                currentActive = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href').substring(1);
+            if (href === currentActive) {
+                link.classList.remove('text-slate-400');
+                link.classList.add('text-accent', 'font-semibold');
+            } else {
+                link.classList.remove('text-accent', 'font-semibold');
+                link.classList.add('text-slate-400');
+            }
+        });
+    }
+
+    // Run on scroll and initial load
+    window.addEventListener('scroll', updateNavHighlight);
+    updateNavHighlight();
+
+</script>
+
+</body>
+</html>

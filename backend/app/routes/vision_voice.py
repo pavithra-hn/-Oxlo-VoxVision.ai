@@ -17,6 +17,8 @@ from app.services.vision_voice_service import (
     vision_aware_chat,
     text_only_chat,
     check_needs_recapture,
+    route_intent,
+    vision_image_generate,
 )
 from app.services.stt_service import transcribe
 from app.services.preprocessing_service import (
@@ -150,17 +152,22 @@ async def vision_voice_pipeline(
         intent_result = detect_intent_fast(enriched)
         intent = intent_result["intent"]
 
-        # ── 5. Vision intent detection ────────────────────────────────────
-        needs_vision = detect_vision_need(enriched)
+        # ── 5. Intent Router — central routing layer ─────────────────
         has_frame = bool(frame and len(frame) > 100)
+        routed_intent = route_intent(enriched, has_frame)
 
         logger.info(
-            "Vision voice intent: needs_vision=%s has_frame=%s intent=%s lang=%s",
-            needs_vision, has_frame, intent, detected_language,
+            "Vision voice router: routed_intent=%s has_frame=%s intent=%s lang=%s",
+            routed_intent, has_frame, intent, detected_language,
         )
 
-        # ── 6. Route to Vision LLM or Chat LLM ───────────────────────────
-        if needs_vision and has_frame:
+        # ── 6. Route to the appropriate handler ───────────────────
+        if routed_intent == "image_generation" and has_frame:
+            # Image generation: VLM describe → constrained prompt → image gen
+            result = await vision_image_generate(
+                frame, enriched, detected_language,
+            )
+        elif routed_intent == "vision_analysis":
             # Vision-aware chat: send frame + transcript to Vision LLM
             result = await vision_aware_chat(
                 frame, enriched, parsed_history, detected_language,
@@ -173,8 +180,10 @@ async def vision_voice_pipeline(
 
         latency_ms = int((time.time() - t_start) * 1000)
         logger.info(
-            "Vision voice pipeline: vision_used=%s recapture=%s latency=%dms",
-            result["vision_used"], result.get("needs_recapture", False), latency_ms,
+            "Vision voice pipeline: routed=%s vision_used=%s image_gen=%s recapture=%s latency=%dms",
+            routed_intent, result["vision_used"],
+            result.get("image_generated", False),
+            result.get("needs_recapture", False), latency_ms,
         )
 
         return VisionVoicePipelineResult(
@@ -188,10 +197,13 @@ async def vision_voice_pipeline(
             recapture_message=result.get("recapture_message", ""),
             detected_language=detected_language,
             language_name=language_name,
+            image_generated=result.get("image_generated", False),
+            generated_image_b64=result.get("generated_image_b64"),
+            image_model_used=result.get("model_used", ""),
             pipeline_metadata={
                 "latency_ms": latency_ms,
                 "stt_engine": stt_engine,
-                "vision_intent": needs_vision,
+                "routed_intent": routed_intent,
                 "had_frame": has_frame,
                 "asr_confidence": confidence,
             },

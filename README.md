@@ -1,4 +1,11 @@
-# Oxlo VoxVision.ai
+<p align="center">
+  <img src="frontend/public/logo-banner.png" alt="Oxlo-voxvision.ai" width="720" />
+</p>
+
+<p align="center">
+  <strong>Multimodal AI Assistant — Voice, Vision, and Image Generation</strong><br/>
+  Built for the Oxlo.ai Hackathon
+</p>
 
 A multimodal AI assistant built for the **Oxlo.ai Hackathon** that combines voice interaction, real-time computer vision, and image generation into a single web application. The entire system is powered by the **Oxlo.ai multi-model API**, which provides unified access to a diverse set of open-source AI models (Kimi K2.5, Qwen 3, Kokoro, YOLOv11, FLUX, and more) through a single API key and OpenAI-compatible endpoint. The frontend is built with React + TypeScript (Vite), and the backend runs on Python FastAPI, with additional STT support from Sarvam AI and Groq for Indian-language and English speech recognition respectively.
 
@@ -6,10 +13,10 @@ A multimodal AI assistant built for the **Oxlo.ai Hackathon** that combines voic
 
 ## Project Overview
 
-Oxlo VoxVision.ai is a multimodal AI assistant that can hear, see, speak, and generate images. It provides two primary interaction modes accessible through a glassmorphism-styled web interface:
+Oxlo-voxvision.ai is a multimodal AI assistant that can hear, see, speak, and generate images. It provides two primary interaction modes accessible through a glassmorphism-styled web interface:
 
 - **Voice Mode**: A full-duplex voice assistant with multilingual support, real-time speech-to-text, LLM-powered response generation, and natural text-to-speech output.
-- **Vision Mode**: An AI assistant with live visual awareness through the user's webcam. It can greet users based on their appearance, answer visual questions, detect objects in real time, and run creative vision features like scene reimagination, object storytelling, and movie poster generation.
+- **Vision Mode**: An AI assistant with live visual awareness through the user's webcam. It can greet users based on their appearance, answer visual questions, detect objects in real time, **generate styled images from the camera feed** (anime, cartoon, traditional wear, and 17+ styles via img2img), and run creative vision features like scene reimagination, object storytelling, and movie poster generation.
 
 The system supports eight languages (English, Hindi, Kannada, Tamil, Telugu, Spanish, French, Japanese) with native script output for all Indic languages.
 
@@ -80,6 +87,8 @@ From the Vision Mode toolbar, the user can switch to three creative features:
 - **Biographies**: The user taps a detected object. The AI writes a fictional origin story for that object and generates an illustration of its past.
 - **Director**: With one click, the AI treats the current camera view as a movie still, picks a genre, writes a title/tagline/trailer script, and generates a professional movie poster.
 
+The user can also say "Make me look like an anime character" or "How would I look in traditional wear" — the system captures their camera frame and transforms it using **img2img** (Oxlo Image Pro `/v1/images/edits` endpoint), producing a styled portrait while preserving their likeness. For pure image generation requests (e.g., "generate image of a sunset"), a standard text-to-image pipeline is used.
+
 ---
 
 ## Features
@@ -132,11 +141,12 @@ YOLOv11-based real-time object detection runs in parallel with scene narration. 
 
 ### Image Generation
 
-A standalone image generation feature accessible through compound requests. Supports two models with automatic fallback:
-- **Oxlo Image Pro**: Primary high-quality image generation
-- **FLUX.1 Schnell**: Fast fallback model
+Image generation is available in **two modes**:
 
-Images are generated at 1024x1024 resolution by default with base64 encoding for direct display.
+1. **img2img (Camera → Styled Image)**: In Vision Mode, the user can say "Make me anime" or "How would I look in traditional wear". The camera frame is sent directly to **Oxlo Image Pro** via the `/v1/images/edits` endpoint with a style prompt and optimized `strength` parameter. 17 style presets are supported (anime, cartoon, manga, superhero, traditional, formal, vintage, etc.).
+2. **text2img (Text → Image)**: For prompts like "generate image of a sunset", a text-to-image pipeline generates the image using `Oxlo Image Pro` or `FLUX.1 Schnell` as fallback.
+
+Both modes support automatic model fallback and generate images at 1024×1024 resolution with base64 encoding.
 
 ### Compound Requests
 
@@ -166,14 +176,19 @@ flowchart TB
     H1 --> H2["enrich_intent"]
     H2 --> H3["repair_trailing_fragment"]
     H3 --> I{"Intent Classification"}
-    I -->|"Compound"| J["Image + Structured Text"]
+    I -->|"Compound"| J["Parallel Generation"]
+    J --> J1["Image: Oxlo Image Pro / FLUX.1"]
+    J --> J2["Structured Text: LLM"]
+    J1 --> J3["Combined Response + Voice Summary"]
+    J2 --> J3
     I -->|"Question / Command"| K["LLM Response Generation"]
     K --> L{"Model Selection"}
     L -->|"Voice Mode"| M["Qwen 3 32B (Fast)"]
     L -->|"Text Mode"| N["Kimi K2.5 (Premium)"]
     M --> O["Response Cleaner"]
     N --> O
-    O --> P["Text-to-Speech"]
+    J3 --> P["Text-to-Speech"]
+    O --> P
     P --> Q{"TTS Engine Routing"}
     Q -->|"English"| R["Kokoro 82M"]
     Q -->|"Indic Languages"| S["gTTS"]
@@ -189,6 +204,7 @@ flowchart TB
     B --> C{"Parallel Processing"}
     C --> D["YOLOv11 Object Detection"]
     C --> E["Vision LLM Narration"]
+    C --> P["Image Generation (img2img)"]
     D --> F["Detection Overlay Rendering"]
     E --> G{"Model Selection"}
     G -->|"Primary"| H["Kimi K2.5 (Vision)"]
@@ -197,10 +213,16 @@ flowchart TB
     H --> K["Response Cleaner"]
     I --> K
     J --> K
+    P --> Q{"Generation Mode"}
+    Q -->|"Self-Transform"| R["Oxlo Image Pro (img2img)"]
+    Q -->|"Text Prompt"| S["Oxlo Image Pro (text2img)"]
+    R --> T["Image Render in Chat"]
+    S --> T
     K --> L["TTS Narration"]
     L --> M["Audio Playback"]
     F --> N["UI: Bounding Boxes + Labels"]
     K --> O["UI: Scene Description"]
+    T --> U["UI: Download / Regenerate"]
 ```
 
 ### Vision Voice Pipeline
@@ -214,14 +236,21 @@ flowchart TB
     E --> F["Enter Listening State"]
     F --> G["User Taps Mic + Speaks"]
     G --> H["STT: Transcribe Speech"]
-    H --> I{"Vision Intent Classifier"}
+    H --> I{"Intent Router"}
     I -->|"Visual Question"| J["Capture Fresh Frame"]
     J --> K["Vision LLM: Frame + Transcript"]
+    I -->|"Image Generation"| P["Capture Fresh Frame"]
+    P --> Q{"Self-Transform?"}
+    Q -->|"Yes (make me anime)"| R["img2img: Frame → Oxlo Image Pro"]
+    Q -->|"No (generate a cat)"| S["text2img: Prompt → Oxlo Image Pro"]
+    R --> T["Render Image in Chat"]
+    S --> T
     I -->|"Non-Visual Question"| L["Chat LLM: Text Only"]
     K --> M{"Recapture Check"}
     M -->|"Clear Response"| N["TTS: Speak Response"]
     M -->|"Cannot See Clearly"| O["Ask User to Reposition"]
     L --> N
+    T --> N
     O --> F
     N --> F
 ```
@@ -243,7 +272,7 @@ flowchart TB
 | TTS (English) | Kokoro 82M | Oxlo.ai | High-quality English speech synthesis |
 | TTS (Indic) | gTTS | Google | Native Kannada, Tamil, Telugu, Hindi speech |
 | Object Detection | YOLOv11 | Oxlo.ai | Real-time multi-object detection |
-| Image Gen (Primary) | Oxlo Image Pro | Oxlo.ai | Premium text-to-image generation |
+| Image Gen (Primary) | Oxlo Image Pro | Oxlo.ai | Text-to-image + img2img (camera → styled image) |
 | Image Gen (Fast) | FLUX.1 Schnell | Oxlo.ai | Fast fallback image generation |
 
 ### Backend Stack
@@ -475,7 +504,7 @@ Point the camera at a product, package, or label and ask the AI to read and desc
 
 ## What Makes It Different
 
-Most AI assistants operate in a single modality: text-only chatbots, voice-only speakers, or image-only analyzers. Oxlo VoxVision.ai combines all four modalities (voice, vision, text, and image generation) into a single, unified experience where the AI can hear you, see you, respond to you in speech, and generate images on demand.
+Most AI assistants operate in a single modality: text-only chatbots, voice-only speakers, or image-only analyzers. Oxlo-voxvision.ai combines all four modalities (voice, vision, text, and image generation) into a single, unified experience where the AI can hear you, see you, respond to you in speech, and generate images on demand.
 
 ### It can see you and respond accordingly
 

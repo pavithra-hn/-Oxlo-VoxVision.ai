@@ -29,6 +29,10 @@ export interface VisionVoicePipelineResult {
   detected_language: string;
   language_name: string;
   pipeline_metadata: Record<string, unknown>;
+  // ── Image Generation fields ──
+  image_generated: boolean;
+  generated_image_b64?: string;
+  image_model_used?: string;
 }
 
 // ── Greeting — First Frame Analysis ─────────────────────────────────────────

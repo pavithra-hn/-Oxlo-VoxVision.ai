@@ -4,7 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import VoiceMode from './components/VoiceMode';
 import VisionMode from './components/VisionMode';
 import type { Mode } from './types';
-import { Mic, Eye, Hexagon } from 'lucide-react';
+import { Mic, Eye } from 'lucide-react';
 
 export default function App() {
   const [mode, setMode] = useState<Mode>('voice');
@@ -32,22 +32,16 @@ export default function App() {
         <div className="max-w-7xl mx-auto flex items-center justify-between pointer-events-auto">
           
           {/* Logo */}
-          <div className="flex items-center gap-4 px-5 py-3 rounded-[24px] border shadow-xl"
-            style={{
-              background: 'rgba(5, 7, 13, 0.6)',
-              backdropFilter: 'blur(20px)',
-              borderColor: 'rgba(0, 170, 255, 0.1)',
-              boxShadow: '0 0 20px rgba(0, 170, 255, 0.05)',
-            }}
-          >
-            <div className="w-10 h-10 rounded-full flex items-center justify-center"
+          <div className="flex items-center gap-3">
+            <img
+              src="/logo-icon.png"
+              alt="Oxlo VoxVision.ai"
               style={{
-                background: 'linear-gradient(135deg, #00AAFF, #0088CC)',
-                boxShadow: '0 0 25px rgba(0, 170, 255, 0.4)',
+                height: '40px',
+                width: 'auto',
+                filter: 'drop-shadow(0 0 10px rgba(0, 170, 255, 0.5))',
               }}
-            >
-              <Hexagon className="w-5 h-5 text-white" />
-            </div>
+            />
             <div>
               <h1 className="text-lg font-bold leading-tight" style={{ color: '#e0f0ff' }}>
                 Oxlo <span style={{ color: '#00AAFF' }}>VoxVision</span><span className="text-xs font-normal" style={{ color: 'rgba(0,170,255,0.5)' }}>.ai</span>

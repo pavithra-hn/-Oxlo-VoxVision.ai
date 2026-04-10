@@ -186,6 +186,7 @@ class VisionVoiceGreetingResponse(BaseModel):
 
 class VisionVoicePipelineResult(BaseModel):
     """Unified result from the vision voice pipeline."""
+    model_config = _SAFE_CONFIG
     raw_transcript: str                # Original ASR transcript
     cleaned_transcript: str            # Preprocessed text
     intent: str                        # question | command | conversational
@@ -197,4 +198,8 @@ class VisionVoicePipelineResult(BaseModel):
     detected_language: str = "en"
     language_name: str = "English"
     pipeline_metadata: dict = {}
+    # ── Image Generation (added for Vision Mode image gen) ──
+    image_generated: bool = False              # Whether image was generated
+    generated_image_b64: Optional[str] = None  # Base64 image data
+    image_model_used: Optional[str] = None     # Which image model was used
 

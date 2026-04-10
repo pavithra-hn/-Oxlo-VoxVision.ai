@@ -413,7 +413,7 @@ export default function VoiceMode() {
     : phase === 'generating_image' ? '🖼️ Generating image...'
     : phase === 'speaking' ? 'Speaking...'
     : isGeneratingImage ? '🖼️ Generating image...'
-    : 'Speak to generate images or text';
+    : 'Ready';
 
   // Language badge: shown when non-English language is active
   const LANG_FLAGS: Record<string, string> = {
@@ -459,52 +459,8 @@ export default function VoiceMode() {
               {messages.length <= 1 && phase === 'idle' && !isGeneratingImage ? (
                 <>
                   <h2 className="text-5xl font-bold" style={{ color: '#00AAFF', letterSpacing: '-0.02em', lineHeight: '1.2' }}>
-                    Talk or type to create images, text, and more
+                    What can I help with?
                   </h2>
-                  <p className="text-sm mt-4 font-medium drop-shadow-md" style={{ color: 'rgba(0, 170, 255, 0.8)', maxWidth: '420px', lineHeight: '1.6', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
-                    Use <span style={{ color: '#00AAFF' }}>voice</span> or <span style={{ color: '#00AAFF' }}>text</span> to generate images instantly.
-                  </p>
-
-                  {/* ── Prompt Suggestions — teach through examples ── */}
-                  <div className="flex flex-col md:flex-row items-center justify-center gap-8 mt-12 max-w-4xl mx-auto z-10 w-full mb-8 relative">
-                    
-                    {/* Prompt Chips Stack */}
-                    <div className="flex flex-col gap-3 items-start shrink-0">
-                      {PROMPT_SUGGESTIONS.map((s) => (
-                        <motion.button
-                          key={s.text}
-                          whileHover={{ scale: 1.02, x: 5, borderColor: 'rgba(0,170,255,0.4)', background: 'rgba(0,170,255,0.06)' }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => {
-                            const clean = s.text.replace(/^say:\s*/i, '');
-                            setShowImagePanel(true);
-                            handleImageGenerate(clean);
-                          }}
-                          className="text-left px-5 py-3.5 rounded-[20px] text-[13px] leading-snug transition-all cursor-pointer shadow-lg w-[340px]"
-                          style={{
-                            background: s.mode === 'voice' ? 'rgba(0,170,255,0.04)' : 'rgba(0,170,255,0.02)',
-                            border: `1px solid ${s.mode === 'voice' ? 'rgba(0,170,255,0.2)' : 'rgba(0,170,255,0.1)'}`,
-                            color: 'rgba(0,170,255,0.7)',
-                            backdropFilter: 'blur(12px)',
-                          }}
-                        >
-                          <span
-                            className="inline-flex items-center gap-1 text-[10px] font-bold uppercase px-2 py-0.5 rounded-full mr-2.5 align-middle shadow-sm"
-                            style={{
-                              background: s.mode === 'voice' ? 'rgba(0,170,255,0.15)' : 'rgba(0,170,255,0.08)',
-                              color: 'rgba(0,170,255,0.85)',
-                              letterSpacing: '0.06em',
-                            }}
-                          >
-                            {s.mode === 'voice' ? '🎤 Say' : '🖼️ Type'}
-                          </span>
-                          {s.text.replace(/^say:\s*/i, '').length > 42
-                            ? s.text.replace(/^say:\s*/i, '').slice(0, 42) + '…'
-                            : s.text.replace(/^say:\s*/i, '')}
-                        </motion.button>
-                      ))}
-                    </div>
-                  </div>
                 </>
               ) : (
                 <>
@@ -961,40 +917,19 @@ export default function VoiceMode() {
                   className="text-xs font-medium uppercase"
                   style={{ color: 'rgba(0, 170, 255, 0.7)', fontSize: '11px', letterSpacing: '0.04em' }}
                 >
-                  {isGeneratingImage ? '🖼️ Generating image...'
-                    : phase === 'transcribing' ? 'Processing your voice...'
+                  {isGeneratingImage ? 'Generating image...'
+                    : phase === 'transcribing' ? 'Processing...'
                     : phase === 'thinking' ? 'Thinking...'
-                    : phase === 'generating_image' ? '🖼️ Generating image...'
+                    : phase === 'generating_image' ? 'Generating image...'
                     : phase === 'speaking' ? 'Speaking...'
-                    : 'Speak to generate images or text'}
+                    : ''}
                 </motion.p>
               )}
             </AnimatePresence>
           </div>
         </div>
 
-        {/* ── Contextual hint strip — first-time discovery aid ── */}
-        {phase === 'idle' && !isGeneratingImage && messages.length <= 1 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            className="text-center pointer-events-none mt-2"
-            style={{ 
-              background: 'rgba(5, 7, 13, 0.75)', 
-              backdropFilter: 'blur(24px)',
-              padding: '10px 20px', 
-              borderRadius: '20px', 
-              border: '1px solid rgba(0,170,255,0.25)',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(0,170,255,0.1)'
-            }}
-          >
-            <p style={{ color: 'rgba(255,255,255,0.95)', fontSize: '13px', letterSpacing: '0.02em', fontWeight: 500 }}>
-              You can create images using voice or text — try saying: <span style={{ color: '#00AAFF' }}>"Create an image of a sunset"</span>
-            </p>
-          </motion.div>
-        )}
+
       </div>
 
       <MiniAIAssistant phase={phase} isGeneratingImage={isGeneratingImage} hasMessages={messages.length > 0} />

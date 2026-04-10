@@ -40,11 +40,26 @@ pnpm-debug.log*
 # Project scratch files and draft docs
 oxlo_docs.md
 vision_mode_ideas.md
+image.png
+image copy.png
+image copy 2.png
+image copy 3.png
 
-# Test and scratch scripts
+# Test, scratch, and one-off fix scripts
 test_*.py
 scratch_*.py
 temp_*.py
+fix_*.py
+revert_*.py
+
+# Temp HTML files
+frontend/public/temp_*.html
+
+# Ngrok
+ngrok.log
+
+# Gemini AI local data
+.gemini/
 
 # OS generated files
 .DS_Store

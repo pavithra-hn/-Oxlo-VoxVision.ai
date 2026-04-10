@@ -186,6 +186,232 @@ def detect_vision_need(transcript: str) -> bool:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# IMAGE GENERATION INTENT DETECTION (Hybrid: keyword + regex, extensible)
+# ─────────────────────────────────────────────────────────────────────────────
+
+_IMAGE_GEN_KEYWORDS = [
+    "generate", "create image", "make image", "draw me", "draw my",
+    "anime", "cartoon", "transform me", "turn me into", "make me look",
+    "stylize", "artistic", "convert me", "render me", "pixel art",
+    "sketch me", "paint me", "caricature", "manga", "superhero",
+    "avatar", "portrait style", "oil painting", "watercolor",
+]
+
+_IMAGE_GEN_PATTERNS = [
+    re.compile(r"(generate|create|make|draw|render)\s+(a|an|my|me)\s+(image|picture|photo|portrait)", re.I),
+    re.compile(r"(turn|transform|convert|change)\s+(me|my|this|myself)\s+(into|to|as)", re.I),
+    re.compile(r"(as|like)\s+(an?\s+)?(anime|cartoon|manga|superhero|sketch|painting)", re.I),
+    re.compile(r"(anime|cartoon|manga|pixel.?art|sketch|oil.?paint|watercolor)\s+(version|style|character|form)", re.I),
+    re.compile(r"(make|create)\s+me\s+(look|appear)\s+(like|as)", re.I),
+    # Hindi
+    re.compile(r"(बनाओ|बनाना|तस्वीर|चित्र|एनिमे|कार्टून)", re.I),
+    # Kannada
+    re.compile(r"(ಮಾಡು|ಚಿತ್ರ|ಅನಿಮೆ|ಕಾರ್ಟೂನ್)", re.I),
+]
+
+
+def detect_image_gen_need(transcript: str) -> bool:
+    """
+    Does this user utterance request image generation?
+
+    Hybrid detection: fast keyword check first, then regex patterns.
+    Designed to be extensible — replace with LLM classifier later.
+
+    Returns True if image generation is needed.
+    """
+    if not transcript or not transcript.strip():
+        return False
+
+    text = transcript.strip().lower()
+
+    # Fast keyword check first
+    for keyword in _IMAGE_GEN_KEYWORDS:
+        if keyword in text:
+            logger.info("Image gen intent (keyword): '%s'", keyword)
+            return True
+
+    # Regex patterns for more complex phrasing
+    for pattern in _IMAGE_GEN_PATTERNS:
+        if pattern.search(transcript.strip()):
+            logger.info("Image gen intent (regex): %s", pattern.pattern[:50])
+            return True
+
+    return False
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# INTENT ROUTER — Central routing layer (extensible for future modes)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def route_intent(transcript: str, has_frame: bool) -> str:
+    """
+    Central intent router for Vision Mode.
+
+    Routes to one of:
+      - "image_generation"  → user wants to generate/transform an image
+      - "vision_analysis"   → user needs the camera frame analyzed
+      - "text_chat"         → general question, no camera needed
+
+    Priority: image_generation > vision_analysis > text_chat
+    Extensible: add "video", "multimodal_chain", "tools" here later.
+    """
+    # Image generation takes highest priority
+    if detect_image_gen_need(transcript):
+        return "image_generation"
+
+    # Vision analysis needs a frame
+    if detect_vision_need(transcript) and has_frame:
+        return "vision_analysis"
+
+    # Default: text-only chat (fastest)
+    return "text_chat"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# IMAGE GENERATION — Direct img2img (primary) | VLM+text2img (fallback)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Keywords that indicate the user wants their own image transformed
+_SELF_TRANSFORM_KEYWORDS = [
+    "my image", "my photo", "my face", "me as", "me into", "me look",
+    "myself", "transform me", "turn me", "convert me", "make me",
+    "how do i look", "how would i look", "capture my", "my frame",
+]
+
+# Style keywords and their optimal img2img strength
+_STYLE_MAP = {
+    "anime":        {"prompt_style": "high quality anime style portrait, Studio Ghibli inspired", "strength": 0.7},
+    "cartoon":      {"prompt_style": "cartoon style illustration, vibrant colors", "strength": 0.7},
+    "manga":        {"prompt_style": "manga style black and white illustration, detailed ink work", "strength": 0.75},
+    "pixel art":    {"prompt_style": "pixel art retro game style portrait, 16-bit", "strength": 0.8},
+    "sketch":       {"prompt_style": "pencil sketch drawing, detailed shading", "strength": 0.65},
+    "oil painting": {"prompt_style": "classical oil painting portrait, Renaissance style", "strength": 0.7},
+    "watercolor":   {"prompt_style": "watercolor painting, soft artistic brush strokes", "strength": 0.7},
+    "superhero":    {"prompt_style": "superhero comic book style, dynamic pose, cape", "strength": 0.75},
+    "cyberpunk":    {"prompt_style": "cyberpunk neon-lit portrait, futuristic", "strength": 0.7},
+    "fantasy":      {"prompt_style": "fantasy RPG character portrait, magical aura", "strength": 0.7},
+    "steampunk":    {"prompt_style": "steampunk Victorian portrait, gears and goggles", "strength": 0.75},
+    "3d render":    {"prompt_style": "3D rendered character, Pixar style, high quality", "strength": 0.8},
+    "chibi":        {"prompt_style": "cute chibi anime character, big head small body", "strength": 0.8},
+    "comic":        {"prompt_style": "comic book illustration, bold outlines, pop art", "strength": 0.75},
+    "traditional":  {"prompt_style": "wearing traditional Indian attire, ornate clothing, cultural dress", "strength": 0.6},
+    "formal":       {"prompt_style": "wearing formal business attire, professional portrait", "strength": 0.55},
+    "vintage":      {"prompt_style": "vintage 1960s photograph, sepia tones, retro", "strength": 0.65},
+}
+
+
+def _detect_style(user_prompt: str) -> tuple[str, str, float]:
+    """Extract style from user prompt. Returns (style_name, prompt_style, strength)."""
+    lower = user_prompt.lower()
+    for style_name, config in _STYLE_MAP.items():
+        if style_name in lower:
+            return style_name, config["prompt_style"], config["strength"]
+    return "anime", _STYLE_MAP["anime"]["prompt_style"], _STYLE_MAP["anime"]["strength"]
+
+
+def _is_self_transform(user_prompt: str) -> bool:
+    """Does the user want to transform THEIR OWN image (vs generate a new one)?"""
+    lower = user_prompt.lower()
+    return any(kw in lower for kw in _SELF_TRANSFORM_KEYWORDS)
+
+
+async def vision_image_generate(
+    frame_b64: str,
+    user_prompt: str,
+    language: str = "en",
+) -> dict:
+    """
+    Generate/transform an image from the user's camera frame.
+
+    Two modes:
+    A) Self-transform ("make me anime") → img2img: camera frame + style prompt
+    B) Pure generation ("generate image of a cat") → text-to-image: prompt only
+
+    Fallback chain:
+    1. img2img via /v1/images/edits (direct frame → styled image)
+    2. VLM describe + text-to-image (if img2img not available)
+
+    Returns: {
+        "response": str,
+        "generated_image_b64": str,
+        "image_generated": True,
+        "model_used": str,
+        "vision_used": True,
+    }
+    """
+    from app.services.image_service import generate_image as text2img
+    from app.services.image_service import generate_image_from_image as img2img
+
+    style_name, prompt_style, strength = _detect_style(user_prompt)
+    is_self = _is_self_transform(user_prompt)
+
+    try:
+        if is_self and frame_b64:
+            # ── Mode A: img2img — direct camera frame transformation ────
+            img_prompt = (
+                f"Transform this person's photo into {prompt_style}. "
+                f"Keep the person's likeness and features. "
+                f"High quality, detailed, professional. Family-friendly."
+            )
+
+            logger.info(
+                "img2img: style=%s strength=%.2f self_transform=True",
+                style_name, strength,
+            )
+
+            result = await img2img(
+                image_b64=frame_b64,
+                prompt=img_prompt,
+                strength=strength,
+            )
+
+            friendly_msg = (
+                f"Here's your {style_name}-style transformation! "
+                f"I transformed your camera image directly into this artistic version."
+            )
+        else:
+            # ── Mode B: text-to-image — pure generation ─────────────────
+            img_prompt = (
+                f"{user_prompt}. "
+                f"Style: {prompt_style}. "
+                f"High quality, detailed, professional illustration. Family-friendly."
+            )
+
+            logger.info("text2img: style=%s prompt_len=%d", style_name, len(img_prompt))
+
+            result = await text2img(prompt=img_prompt)
+
+            friendly_msg = (
+                f"Here's your generated image! "
+                f"Created in {style_name} style as requested."
+            )
+
+        return {
+            "response": clean_response(friendly_msg),
+            "generated_image_b64": result["image_b64"],
+            "image_generated": True,
+            "model_used": result["model_used"],
+            "vision_used": True,
+            "detections": [],
+            "needs_recapture": False,
+            "recapture_message": "",
+        }
+
+    except Exception as e:
+        logger.error("Image generation failed: %s", e)
+        return {
+            "response": f"I understood your request for a {style_name} image, but generation hit an issue. Please try again!",
+            "generated_image_b64": None,
+            "image_generated": False,
+            "model_used": "",
+            "vision_used": True,
+            "detections": [],
+            "needs_recapture": False,
+            "recapture_message": "",
+        }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # RECAPTURE DETECTION
 # ─────────────────────────────────────────────────────────────────────────────
 
