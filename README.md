@@ -2,7 +2,7 @@
   <img src="frontend/public/logo-header.png" alt="Oxlo VoxVision.ai" width="200" />
 </p>
 
-<h1 align="center">Oxlo VoxVision.ai</h1>
+<h1 align="center">Oxlo-VoxVision.ai</h1>
 
 <p align="center">
   <strong>Multimodal AI Assistant : Voice, Vision & Image Generation</strong><br/>
