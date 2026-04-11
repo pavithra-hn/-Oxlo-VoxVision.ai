@@ -18,7 +18,7 @@
 
 ---
 
-## What is VoxVision?
+## What is Oxlo-VoxVision?
 
 A multimodal AI assistant that can **hear you, see you, speak back, and generate images** all in one interface. It combines real-time voice conversation, live webcam vision, object detection, and AI image generation powered by **Oxlo.ai's multi-model API**.
 
