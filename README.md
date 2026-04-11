@@ -226,3 +226,4 @@ SARVAM_API_KEY=your_sarvam_api_key
 ## License
 
 Built for the Oxlo.ai Hackathon. All AI model inference powered by [Oxlo.ai](https://oxlo.ai).
+Email ID used for Oxlo registration - pavithrahn56@gmail.com
