@@ -51,6 +51,11 @@ scratch_*.py
 temp_*.py
 fix_*.py
 revert_*.py
+repair_*.py
+
+# Backup files
+*.bak
+
 
 # Temp HTML files
 frontend/public/temp_*.html

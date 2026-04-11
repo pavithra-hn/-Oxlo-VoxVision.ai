@@ -1,13 +1,39 @@
-import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, } from 'framer-motion';
 import { Toaster } from 'react-hot-toast';
+import { BrowserRouter, Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import VoiceMode from './components/VoiceMode';
 import VisionMode from './components/VisionMode';
+import LandingPage from './pages/LandingPage';
 import type { Mode } from './types';
 import { Mic, Eye } from 'lucide-react';
 
-export default function App() {
-  const [mode, setMode] = useState<Mode>('voice');
+function AppContent() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isLanding = location.pathname === '/';
+
+  // Toggle body class: app-shell-active locks overflow for Voice/Vision,
+  // removing it allows landing page to scroll freely.
+  useEffect(() => {
+    if (isLanding) {
+      document.body.classList.remove('app-shell-active');
+    } else {
+      document.body.classList.add('app-shell-active');
+    }
+    return () => {
+      // Clean up on unmount
+      document.body.classList.remove('app-shell-active');
+    };
+  }, [isLanding]);
+
+  // If we are on the landing page, render it independently of the app shell
+  if (isLanding) {
+    return <LandingPage />;
+  }
+
+  // Derive mode from the current URL to keep the header UI in sync
+  const mode: Mode = location.pathname.includes('/vision') ? 'vision' : 'voice';
 
   return (
     <div className="h-screen w-screen flex flex-col overflow-hidden font-sans selection:bg-[rgba(0,170,255,0.2)]" style={{ background: '#05070D' }}>
@@ -32,7 +58,10 @@ export default function App() {
         <div className="max-w-7xl mx-auto flex items-center justify-between pointer-events-auto">
           
           {/* Logo */}
-          <div className="flex items-center gap-3">
+          <div 
+             className="flex items-center gap-3 cursor-pointer" 
+             onClick={() => navigate('/')}
+          >
             <img
               src="/logo-icon.png"
               alt="Oxlo VoxVision.ai"
@@ -61,14 +90,14 @@ export default function App() {
             }}
           >
             {([
-              { id: 'voice' as Mode, icon: Mic, label: 'Voice' },
-              { id: 'vision' as Mode, icon: Eye, label: 'Vision' },
-            ]).map(({ id, icon: Icon, label }) => {
+              { id: 'voice' as Mode, icon: Mic, label: 'Voice', path: '/voice' },
+              { id: 'vision' as Mode, icon: Eye, label: 'Vision', path: '/vision' },
+            ]).map(({ id, icon: Icon, label, path }) => {
               const isActive = mode === id;
               return (
                 <button
                   key={id}
-                  onClick={() => setMode(id)}
+                  onClick={() => navigate(path)}
                   className="relative flex items-center gap-2.5 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 cursor-pointer"
                   style={{ color: isActive ? '#FFFFFF' : 'rgba(0, 170, 255, 0.35)', textShadow: isActive ? '0 0 10px rgba(0, 170, 255, 0.8)' : 'none' }}
                 >
@@ -106,18 +135,41 @@ export default function App() {
       {/* ── Main Canvas ─────────────────────────────────────────── */}
       <main className="flex-1 w-full h-full relative">
         <AnimatePresence mode="wait">
-          <motion.div
-            key={mode}
-            className="absolute inset-0"
-            initial={{ opacity: 0, scale: 1.02, filter: 'blur(10px)' }}
-            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {mode === 'voice' ? <VoiceMode /> : <VisionMode />}
-          </motion.div>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/voice" element={
+              <motion.div
+                className="absolute inset-0"
+                initial={{ opacity: 0, scale: 1.02, filter: 'blur(10px)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <VoiceMode />
+              </motion.div>
+            } />
+            <Route path="/vision" element={
+              <motion.div
+                className="absolute inset-0"
+                initial={{ opacity: 0, scale: 1.02, filter: 'blur(10px)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <VisionMode />
+              </motion.div>
+            } />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </AnimatePresence>
       </main>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   );
 }
